@@ -123,9 +123,9 @@ $i=isset($_GET['i']) ? ($_GET['i']-1) : 0;
         legend: {
           show: true,
           floating: true,
-          fontSize: '16px',
+          fontSize: '13px',
           position: 'left',
-          offsetX: 160,
+          offsetX: 120,
           offsetY: 15,
           labels: {
             useSeriesColors: true,
