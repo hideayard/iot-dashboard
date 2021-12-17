@@ -1,0 +1,5 @@
+[15-Mar-2021 02:15:29 UTC] PHP Warning:  session_start(): Cannot send session cookie - headers already sent by (output started at /home/microalv/public_html/socso/login.php:1) in /home/microalv/public_html/socso/login.php on line 3
+[15-Mar-2021 02:15:29 UTC] PHP Warning:  session_start(): Cannot send session cache limiter - headers already sent (output started at /home/microalv/public_html/socso/login.php:1) in /home/microalv/public_html/socso/login.php on line 3
+[15-Mar-2021 02:23:55 UTC] PHP Warning:  session_start(): Cannot send session cache limiter - headers already sent (output started at /home/microalv/public_html/socso/login.php:1) in /home/microalv/public_html/socso/login.php on line 3
+[15-Mar-2021 11:10:11 UTC] PHP Warning:  session_start(): Cannot send session cache limiter - headers already sent (output started at /home/microalv/public_html/socso/login.php:1) in /home/microalv/public_html/socso/login.php on line 3
+[17-Mar-2021 00:53:40 UTC] PHP Warning:  session_start(): Cannot send session cache limiter - headers already sent (output started at /home/microalv/public_html/socso/login.php:1) in /home/microalv/public_html/socso/login.php on line 3
