@@ -13,6 +13,15 @@ $s9 = isset($_GET['s9'])?$_GET['s9']:0;
 $s10 = isset($_GET['s10'])?$_GET['s10']:0;
 $s11 = isset($_GET['s11'])?$_GET['s11']:0;
 $s12 = isset($_GET['s12'])?$_GET['s12']:0;
+if($s1 > 0 || $s2 > 0 || $s3 > 0 || $s4 > 0 || $s5 > 0 || $s6 > 0 || $s7 > 0 || $s8 > 0 )
+{
+    $s11 = $s12 = 10;
+}
+else{
+    $s11 = $s12 = 4;
+}
+$s10 = $s9 = 2.5;
+
 require __DIR__ . '/vendor/autoload.php';
 
 $client = new Google_Client();
