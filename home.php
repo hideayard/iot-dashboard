@@ -130,81 +130,83 @@ $(function() {
    * Data and config for chartjs
    */
   'use strict';
-  let arr_data = <?=$json_hasil?>;
-  let arr_data2 = <?=$json_hasil2?>;
-  let arr_data3 = <?=$json_hasil3?>;
-  console.log(arr_data,arr_data2,arr_data3);
+  var morrisLine1;
+  var morrisLine2;
+  var morrisLine3;
 
-  if ($('#pres-chart').length) {
-    Morris.Line({
-      element: 'pres-chart',
-      lineColors: ['#63CF72', '#F36368', '#76C1FA', '#FABA66','#2FF3E0', '#F8D210', '#FA26A0', '#F51720'],
-      data: arr_data,
-      xkey: 'yaxis',
-      ykeys: ['S1','S2','S3','S4','S5','S6','S7','S8'],
-      labels: ['Sensor 1','Sensor 2','Sensor 3','Sensor 4','Sensor 5','Sensor 6','Sensor 7','Sensor 8'],
-      parseTime:false,
-      hideHover:true,
-      // lineWidth:'6px',
-      stacked: true       
-    });
+  init_chart(<?=$json_hasil?>,<?=$json_hasil2?>,<?=$json_hasil3?>);
+
+  function setDataMorris(data,data2,data3) {
+    morrisLine1.setData(data);
+    morrisLine2.setData(data2);
+    morrisLine3.setData(data3);
   }
 
-  if ($('#con-chart').length) {
-    Morris.Line({
-      element: 'con-chart',
-      lineColors: ['#E56997', '#BD97CB'],
-      data: arr_data2,
-      xkey: 'yaxis',
-      ykeys: ['S1','S2'],
-      labels: ['Sensor 1','Sensor 2'],
-      parseTime:false,
-      hideHover:true,
-      // lineWidth:'6px',
-      stacked: true
-    });
+  function init_chart(data,data2,data3)
+  {
+    let arr_data = data;
+    let arr_data2 = data2;
+    let arr_data3 = data3;
+
+    if ($('#pres-chart').length) {
+      morrisLine1 = Morris.Line({
+        element: 'pres-chart',
+        lineColors: ['#63CF72', '#F36368', '#76C1FA', '#FABA66','#2FF3E0', '#F8D210', '#FA26A0', '#F51720'],
+        data: arr_data,
+        xkey: 'yaxis',
+        ykeys: ['S1','S2','S3','S4','S5','S6','S7','S8'],
+        labels: ['Sensor 1','Sensor 2','Sensor 3','Sensor 4','Sensor 5','Sensor 6','Sensor 7','Sensor 8'],
+        parseTime:false,
+        hideHover:true,
+        // lineWidth:'6px',
+        stacked: true       
+      });
+    }
+
+    if ($('#con-chart').length) {
+      morrisLine2 = Morris.Line({
+        element: 'con-chart',
+        lineColors: ['#E56997', '#BD97CB'],
+        data: arr_data2,
+        xkey: 'yaxis',
+        ykeys: ['S1','S2'],
+        labels: ['Sensor 1','Sensor 2'],
+        parseTime:false,
+        hideHover:true,
+        // lineWidth:'6px',
+        stacked: true
+      });
+    }
+
+    if ($('#flow-chart').length) {
+      morrisLine3 = Morris.Line({
+        element: 'flow-chart',
+        lineColors: ['#FBC740', '#66D2D6'],
+        data: arr_data3,
+        xkey: 'yaxis',
+        ykeys: ['S1','S2'],
+        labels: ['Sensor 1','Sensor 2'],
+        parseTime:false,
+        hideHover:true,
+        // lineWidth:'6px',
+        stacked: true
+      });
+    }
   }
 
-  if ($('#flow-chart').length) {
-    Morris.Line({
-      element: 'flow-chart',
-      lineColors: ['#FBC740', '#66D2D6'],
-      data: arr_data3,
-      xkey: 'yaxis',
-      ykeys: ['S1','S2'],
-      labels: ['Sensor 1','Sensor 2'],
-      parseTime:false,
-      hideHover:true,
-      // lineWidth:'6px',
-      stacked: true
-    });
-  }
-
-
-  // setTimeout(function(){ 
-  //   $.ajax({
-  //     url: "https://api.myjson.com/bins/1c5lbc", //dummy server
-  //     method: "GET", //dummy server requires GET not POST
-  //     datatype: "json",
-  //     success: function(data) {
-  //       if ($('#chart2').length) {
-  //         Morris.Line({
-  //           element: 'chart2',
-  //           data: data,
-  //           xkey: 'age',
-  //           ykeys: ['totalM', 'totalF'],
-  //           labels: ['Total MALE', 'Total FEMALE'],
-  //           hideHover: 'auto',
-  //           pointStrokeColors: ['white'],
-  //           lineWidth: '6px',
-  //           parseTime: false,
-  //           lineColors: ['Skyblue', 'Pink'],
-  //         });
-  //       }
-        
-  //     }
+  setInterval(function(){ 
+    $.ajax({
+      url: "get_data_line.php", 
+      method: "GET", 
+      // datatype: "json",
+      success: function(data) {
+        // let data = data.replace(/(\r\n|\n|\r)/gm, "");
+        // console.log(JSON.parse(data));
+        let parsed_data = JSON.parse(data);
+        setDataMorris(parsed_data[0],parsed_data[1],parsed_data[2]);
+      }
     
-  //   });
-  //  }, 5000);
+    });
+   }, 3000);
   });
 </script>

@@ -1,24 +1,29 @@
 <?php
 error_reporting(E_ERROR | E_PARSE);
 
-$s1 = isset($_GET['s1'])?$_GET['s1']:0;
-$s2 = isset($_GET['s2'])?$_GET['s2']:0;
-$s3 = isset($_GET['s3'])?$_GET['s3']:0;
-$s4 = isset($_GET['s4'])?$_GET['s4']:0;
-$s5 = isset($_GET['s5'])?$_GET['s5']:0;
-$s6 = isset($_GET['s6'])?$_GET['s6']:0;
-$s7 = isset($_GET['s7'])?$_GET['s7']:0;
-$s8 = isset($_GET['s8'])?$_GET['s8']:0;
-$s9 = isset($_GET['s9'])?$_GET['s9']:0;
-$s10 = isset($_GET['s10'])?$_GET['s10']:0;
-$s11 = isset($_GET['s11'])?$_GET['s11']:0;
-$s12 = isset($_GET['s12'])?$_GET['s12']:0;
-if($s1 > 0 || $s2 > 0 || $s3 > 0 || $s4 > 0 || $s5 > 0 || $s6 > 0 || $s7 > 0 || $s8 > 0 )
+$s1 = (isset($_GET['s1']) && $_GET['s1'] > 0 )?$_GET['s1']:0;//pressure sensor
+$s2 = (isset($_GET['s2']) && $_GET['s2'] > 0 )?$_GET['s2']:0;//pressure sensor
+$s3 = (isset($_GET['s3']) && $_GET['s3'] > 0 )?$_GET['s3']:0;//pressure sensor
+$s4 = (isset($_GET['s4']) && $_GET['s4'] > 0 )?$_GET['s4']:0;//pressure sensor
+$s5 = (isset($_GET['s5']) && $_GET['s5'] > 0 )?$_GET['s5']:0;//pressure sensor
+$s6 = (isset($_GET['s6']) && $_GET['s6'] > 0 )?$_GET['s6']:0;//pressure sensor
+$s7 = (isset($_GET['s7']) && $_GET['s7'] > 0 )?$_GET['s7']:0;//pressure sensor
+$s8 = (isset($_GET['s8']) && $_GET['s8'] > 0 )?$_GET['s8']:0;//pressure sensor
+
+$s9 = isset($_GET['s9'])?$_GET['s9']:0;//conductivity sensor
+$s10 = isset($_GET['s10'])?$_GET['s10']:0;//conductivity sensor
+
+$s11 = isset($_GET['s11'])?$_GET['s11']:0;//flowrate sensor
+$s12 = isset($_GET['s12'])?$_GET['s12']:0; //flowrate sensor
+
+$ip = isset($_GET['ip'])?$_GET['ip']:0;
+
+if($s11 > 0 || $s12 > 0 )
 {
-    $s11 = $s12 = 10;
+    $s1 = $s2 = $s3 = $s4 = $s5 = $s6 = $s7 = $s8 = 10;
 }
 else{
-    $s11 = $s12 = 4;
+    $s1 = $s2 = $s3 = $s4 = $s5 = $s6 = $s7 = $s8 = 4;
 }
 $s10 = $s9 = 2.5;
 
@@ -49,7 +54,7 @@ $range = '2021!A'.($jml+1).':L'.($jml+1);
 // $values = [ [ generateRandomString(),generateRandomString(),generateRandomString()], ];
 
 // $values = [ [ rand_float(0,100),rand_float(0,100),rand_float(0,100)], ];
-$values = [ [ $s1,$s2,$s3,$s4,$s5,$s6,$s7,$s8,$s9,$s10,$s11,$s12 ], ];
+$values = [ [ $s1,$s2,$s3,$s4,$s5,$s6,$s7,$s8,$s9,$s10,$s11,$s12,$ip ], ];
 
 // echo rand_float(0,20)."\n";
 

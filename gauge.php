@@ -28,13 +28,13 @@ $params = array(
 );
 $result = $service->spreadsheets_values->batchGet($spreadsheetId, $params);
 $hasil = $result->getValueRanges();
-// printf("%d ranges retrieved.", count($hasil) );
+
 $formatted = [];
 $formatted2 = [];
 $formatted3 = [];
 $formatted4 = [];
 $i=0;
-// var_dump($hasil[0]['values']);
+
 foreach($hasil[0]['values'] as $key => $value)
 {
 
@@ -70,7 +70,7 @@ $json_hasil4 = json_encode($formatted4);
         <div class="card">
         <div class="card-body">
             <h4 class="card-title">Pressure</h4>
-            <iframe width="100%" height="100%" frameborder="0" src="gauge_charts.php?i=1&data=<?=$json_hasil?>" scrolling="no"></iframe>
+            <iframe id="chart1" width="100%" height="100%" frameborder="0" src="gauge_charts.php?i=1&data=<?=$json_hasil?>" scrolling="no"></iframe>
         </div>
         </div>
     </div>
@@ -79,7 +79,7 @@ $json_hasil4 = json_encode($formatted4);
         <div class="card">
         <div class="card-body">
             <h4 class="card-title">Pressure</h4>
-            <iframe width="100%"  height="100%" frameborder="0" src="gauge_charts.php?i=5&data=<?=$json_hasil2?>" scrolling="no"></iframe>            </div>
+            <iframe id="chart2" width="100%"  height="100%" frameborder="0" src="gauge_charts.php?i=5&data=<?=$json_hasil2?>" scrolling="no"></iframe>            </div>
         </div>
     </div>
 </div>
@@ -89,7 +89,7 @@ $json_hasil4 = json_encode($formatted4);
         <div class="card">
         <div class="card-body">
             <h4 class="card-title">Conductivity</h4>
-                <iframe width="100%"   height="100%" frameborder="0" src="gauge_charts.php?i=9&data=<?=$json_hasil3?>" scrolling="no"></iframe>            </div>
+                <iframe id="chart3" width="100%"   height="100%" frameborder="0" src="gauge_charts.php?i=9&data=<?=$json_hasil3?>" scrolling="no"></iframe>            </div>
         </div>
     </div>
 
@@ -97,10 +97,34 @@ $json_hasil4 = json_encode($formatted4);
         <div class="card">
         <div class="card-body">
             <h4 class="card-title">Flow Rate</h4>
-                <iframe width="100%"  width="100%"  height="100%" frameborder="0" src="gauge_charts.php?i=11&data=<?=$json_hasil4?>" scrolling="no"></iframe>            </div>
+                <iframe id="chart4" width="100%"  width="100%"  height="100%" frameborder="0" src="gauge_charts.php?i=11&data=<?=$json_hasil4?>" scrolling="no"></iframe>            </div>
         </div>
     </div>
 </div>
 
 
 
+<script>
+
+$(function() {
+    setInterval(function(){ 
+    $.ajax({
+      url: "get_data.php", 
+      method: "GET", 
+      success: function(data) {
+        let parsed_data = JSON.parse(data);
+        console.log("parsed=",parsed_data);
+        console.log("parsed 0 0=",parsed_data[0]);
+        console.log("stringify=",JSON.stringify(parsed_data[0]) );
+        $('#chart1').attr('src', 'gauge_charts.php?i=1&data='+JSON.stringify(parsed_data[0]) );
+        $('#chart2').attr('src', 'gauge_charts.php?i=5&data='+JSON.stringify(parsed_data[1]) );
+        $('#chart3').attr('src', 'gauge_charts.php?i=9&data='+JSON.stringify(parsed_data[2]) );
+        $('#chart4').attr('src', 'gauge_charts.php?i=11&data='+JSON.stringify(parsed_data[3]) );
+        // $('#chart1').attr('src')
+        console.log("reload chart");
+      }
+    
+    });
+   }, 4000);
+  });
+</script>
