@@ -245,7 +245,7 @@ function checkMaintenance($arr)
         <div class="col-lg-6 grid-margin stretch-card">
           <div class="card">
             <div class="card-body">
-              <h4 class="card-title">Device Maintenance Countdown (1) </h4>
+              <h4 class="card-title">Device Maintenance Countdown (Device 1) </h4>
               <div id="countdown1"></div><br>
               <p><h4 style="text-align: center;"><strong>Estimation for next maintenance schedule = <?=$nextMaintenance[0].$countdowndata[0]?></strong></h4></p>
             </div>
@@ -255,7 +255,7 @@ function checkMaintenance($arr)
         <div class="col-lg-6 grid-margin stretch-card">
           <div class="card">
             <div class="card-body">
-              <h4 class="card-title">Device Maintenance Countdown (2) </h4>
+              <h4 class="card-title">Device Maintenance Countdown (Device 2) </h4>
               <div id="countdown2"></div><br>
               <p><h4 style="text-align: center;"><strong>Estimation for next maintenance schedule = <?=$nextMaintenance[1].$countdowndata[1]?></strong></h4></p>
             </div>
