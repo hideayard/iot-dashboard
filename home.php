@@ -37,7 +37,6 @@ $formatted3 = [];
 $i=0;
 foreach($hasil[0]['values'] as $key => $value)
 {
-  $formatted[$i]['yaxis'] = (string)($i+1);
   $j=0;
   $formatted[$i]['S'.++$j] = floatval($value[$j-1]);
   $formatted[$i]['S'.++$j] = floatval($value[$j-1]);
@@ -47,7 +46,8 @@ foreach($hasil[0]['values'] as $key => $value)
   $formatted[$i]['S'.++$j] = floatval($value[$j-1]);
   $formatted[$i]['S'.++$j] = floatval($value[$j-1]);
   $formatted[$i]['S'.++$j] = floatval($value[$j-1]);
-  
+  $formatted[$i]['yaxis'] = (string)($value[$j+1]);
+
   $i++;
 }
 $json_hasil = json_encode($formatted);
@@ -63,11 +63,12 @@ $hasil = $result->getValueRanges();
 $i=0;
 foreach($hasil[0]['values'] as $key => $value)
 {
-  $formatted2[$i]['yaxis'] = (string)($i+1);
   $j = 1;
   $formatted2[$i]['S1'] = floatval($value[$j-1]);
   $j = 2;
   $formatted2[$i]['S2'] = floatval($value[$j-1]);
+  $formatted2[$i]['yaxis'] = (string)($value[$j+1]);
+
   $i++;
 }
 
@@ -85,11 +86,12 @@ $hasil = $result->getValueRanges();
 $i=0;
 foreach($hasil[0]['values'] as $key => $value)
 {
-  $formatted3[$i]['yaxis'] = (string)($i+1);
   $j = 1;
   $formatted3[$i]['S1'] = floatval($value[$j-1]);
   $j = 2;
   $formatted3[$i]['S2'] = floatval($value[$j-1]);
+  $formatted3[$i]['yaxis'] = (string)($value[$j+1]);
+  
   $i++;
 }
 $json_hasil3 = json_encode($formatted3);
@@ -298,7 +300,8 @@ $(function() {
    * Data and config for chartjs
    */
   'use strict';
-  var morrisLine1, morrisLine2, morrisLine3, anomalyData, anomalyCount, parsed_data, anomalyflag = false;
+  var morrisLine1, morrisLine2, morrisLine3, anomalyData, anomalyCount, anomalyflag = false;
+  var parsed_data = [];
   init_chart(<?=$json_hasil?>,<?=$json_hasil2?>,<?=$json_hasil3?>);
 
   function setDataMorris(data,data2,data3) {
@@ -415,7 +418,7 @@ $(function() {
         parsed_data[2] = JSON.parse(data);
         setDataMorris(parsed_data[0],parsed_data[1],parsed_data[2]);
         // morrisLine3.setData(parsed_data);
-        let detailsensor = this.parsed_data.forEach(checkAnomaly);
+        // let detailsensor = this.parsed_data.forEach(checkAnomaly);
         // this.anomalyData = detailsensor;
 
       }

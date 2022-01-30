@@ -59,7 +59,7 @@ foreach($hasil[0]['values'] as $key => $value)
 {
   if($type == "pressure" )
   {
-    $formatted[$i]['yaxis'] = (string)($i+1);
+    // $formatted[$i]['yaxis'] = (string)($i+1);
     $j=0;
     $formatted[$i]['S'.++$j] = floatval($value[$j-1]);
     $formatted[$i]['S'.++$j] = floatval($value[$j-1]);
@@ -69,22 +69,28 @@ foreach($hasil[0]['values'] as $key => $value)
     $formatted[$i]['S'.++$j] = floatval($value[$j-1]);
     $formatted[$i]['S'.++$j] = floatval($value[$j-1]);
     $formatted[$i]['S'.++$j] = floatval($value[$j-1]);
+    $formatted[$i]['yaxis'] = (string)($value[$j+1]);
+
   }
   else if($type == "esp1" )
   {
-    $formatted[$i]['yaxis'] = (string)($i+1);
+    // $formatted[$i]['yaxis'] = (string)($i+1);
     $j = 9;
     $formatted[$i]['S1'] = floatval($value[$j-1]);
     $j = 10;
     $formatted[$i]['S2'] = floatval($value[$j-1]);
+    $formatted[$i]['yaxis'] = (string)($value[$j+1]);
+
   }
   else if($type == "esp2" )
   {
-    $formatted[$i]['yaxis'] = (string)($i+1);
+    // $formatted[$i]['yaxis'] = (string)($i+1);
     $j = 11;
     $formatted[$i]['S1'] = floatval($value[$j-1]);
     $j = 12;
     $formatted[$i]['S2'] = floatval($value[$j-1]);
+    $formatted[$i]['yaxis'] = (string)($value[$j+1]);
+
   }
   $i++;
 }
