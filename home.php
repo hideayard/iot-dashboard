@@ -11,7 +11,7 @@ $client->setPrompt('select_account consent');
 $service = new Google_Service_Sheets($client);
 $spreadsheetId = '1HZ-lVFx6TenJiFlFEv0R3d9w3FpuRXeXwZAEirHdtpU';
 
-$rangeJumlah = '2021!Z1:Z1';
+$rangeJumlah = 'pressure!Z1:Z1';
 $response = $service->spreadsheets_values->get($spreadsheetId, $rangeJumlah);
 $values = $response->getValues();
 $jml = $values[0][0];
@@ -23,7 +23,7 @@ if($jml>$n)
   $start = $jml-$n;
 }
 
-$range = '2021!A'.$start.':L'.($jml+1);
+$range = 'pressure!A'.$start.':J'.($jml+1);
 
 $params = array(
   'ranges' => $range
@@ -38,8 +38,6 @@ $i=0;
 foreach($hasil[0]['values'] as $key => $value)
 {
   $formatted[$i]['yaxis'] = (string)($i+1);
-  $formatted2[$i]['yaxis'] = (string)($i+1);
-  $formatted3[$i]['yaxis'] = (string)($i+1);
   $j=0;
   $formatted[$i]['S'.++$j] = floatval($value[$j-1]);
   $formatted[$i]['S'.++$j] = floatval($value[$j-1]);
@@ -49,20 +47,53 @@ foreach($hasil[0]['values'] as $key => $value)
   $formatted[$i]['S'.++$j] = floatval($value[$j-1]);
   $formatted[$i]['S'.++$j] = floatval($value[$j-1]);
   $formatted[$i]['S'.++$j] = floatval($value[$j-1]);
-  $j = 9;
-  $formatted2[$i]['S1'] = floatval($value[$j-1]);
-  $j = 10;
-  $formatted2[$i]['S2'] = floatval($value[$j-1]);
-  $j = 11;
-  $formatted3[$i]['S1'] = floatval($value[$j-1]);
-  $j = 12;
-  $formatted3[$i]['S2'] = floatval($value[$j-1]);
-
+  
   $i++;
 }
 $json_hasil = json_encode($formatted);
+
+
+$range = 'esp1!A'.$start.':D'.($jml+1);
+
+$params = array(
+  'ranges' => $range
+);
+$result = $service->spreadsheets_values->batchGet($spreadsheetId, $params);
+$hasil = $result->getValueRanges();
+$i=0;
+foreach($hasil[0]['values'] as $key => $value)
+{
+  $formatted2[$i]['yaxis'] = (string)($i+1);
+  $j = 1;
+  $formatted2[$i]['S1'] = floatval($value[$j-1]);
+  $j = 2;
+  $formatted2[$i]['S2'] = floatval($value[$j-1]);
+  $i++;
+}
+
 $json_hasil2 = json_encode($formatted2);
+////=======================
+// var_dump($json_hasil2 );
+
+$range = 'esp2!A'.$start.':D'.($jml+1);
+
+$params = array(
+  'ranges' => $range
+);
+$result = $service->spreadsheets_values->batchGet($spreadsheetId, $params);
+$hasil = $result->getValueRanges();
+$i=0;
+foreach($hasil[0]['values'] as $key => $value)
+{
+  $formatted3[$i]['yaxis'] = (string)($i+1);
+  $j = 1;
+  $formatted3[$i]['S1'] = floatval($value[$j-1]);
+  $j = 2;
+  $formatted3[$i]['S2'] = floatval($value[$j-1]);
+  $i++;
+}
 $json_hasil3 = json_encode($formatted3);
+// var_dump($json_hasil3 );
 
 ////select device 1
 $rangeJumlahlog1 = 'ro_log_1!Z1:Z1';
@@ -92,7 +123,6 @@ $rangeJumlahlog2 = 'ro_log_2!Z1:Z1';
 $responselog2 = $service->spreadsheets_values->get($spreadsheetId, $rangeJumlahlog2);
 $valueslog2 = $responselog2->getValues();
 $jmllog2 = $valueslog2[0][0] - 2; //2 is header
-// $last_maintenance2 = $valueslog2[1][0]; 
 
 $startlog2 = 3;
 
@@ -108,24 +138,10 @@ $paramslog2 = array(
 );
 $resultlog2 = $service->spreadsheets_values->batchGet($spreadsheetId, $paramslog2);
 $hasillog2 = $resultlog2->getValueRanges();
-/// end device 2
-// var_dump($paramslog1);
-// echo "<br>";
-// var_dump($paramslog2);
-//start calculating 
-// echo count($hasillog1[0]['values']);
+
 $maintenance1 = checkMaintenance($hasillog1[0]['values']);
 $maintenance2 = checkMaintenance($hasillog2[0]['values']);
-// echo " | ".$maintenance1[0]." | ".$maintenance1[1];
-// echo "<hr>";
-// echo count($hasillog2[0]['values']);
-// echo " | ".$maintenance2[0]." | ".$maintenance2[1];
-// echo date('d M Y', strtotime( $maintenance1[1] .' +2 months')) ."<br>";
-// echo (new \DateTime($maintenance1[1]))->format('Y-m-d');
-// $date1 = date_create( $maintenance1[1]);
-// $now = date_create( $now );
-// $diff=date_diff( $date1 ,$now);
-// echo "hasil=".$diff;
+
 
 $countdowndata = [];
 $nextMaintenance[0] = date('d M Y', strtotime( $maintenance1[1] .' +2 months'));
@@ -136,9 +152,7 @@ if($date1 > $date2)
 {
   $interval = $date1->diff($date2);
   $countdowndata[0] =  "";//$interval;
-  // echo "difference " . $interval->y . " years, " . $interval->m." months, ".$interval->d." days "; 
-  // shows the total amount of days (not divided into years, months and days like above)
-  // echo "difference " . $interval->days . " days ";
+
 }
 else
 {
@@ -153,9 +167,6 @@ if($date3 > $date2)
 {
   $interval = $date3->diff($date2);
   $countdowndata[1] = "";//$interval;
-  // echo "difference " . $interval->y . " years, " . $interval->m." months, ".$interval->d." days "; 
-  // shows the total amount of days (not divided into years, months and days like above)
-  // echo "difference " . $interval->days . " days ";
 }
 else
 {
@@ -351,22 +362,66 @@ $(function() {
   setInterval(function(){ 
     this.anomalyflag = true;
     $.ajax({
-      url: "get_data_line.php", 
+      url: "get_data_line.php?type=pressure", 
       method: "GET", 
       // datatype: "json",
       success: function(data) {
         // let data = data.replace(/(\r\n|\n|\r)/gm, "");
         console.log(JSON.parse(data));
-        parsed_data = JSON.parse(data);
+        parsed_data[0] = JSON.parse(data);
+        // setDataMorris(parsed_data[0],parsed_data[1],parsed_data[2]);
+        // morrisLine1.setData(parsed_data);
+        // let detailsensor = this.parsed_data.forEach(checkAnomaly);
+        // this.anomalyData = detailsensor;
+        secondRequest();
+      }
+    
+    });
+
+    
+   }, 4000);
+
+   function secondRequest()
+   {
+    $.ajax({
+      url: "get_data_line.php?type=esp1", 
+      method: "GET", 
+      // datatype: "json",
+      success: function(data) {
+        // let data = data.replace(/(\r\n|\n|\r)/gm, "");
+        console.log(JSON.parse(data));
+        parsed_data[1] = JSON.parse(data);
+        // setDataMorris(parsed_data[0],parsed_data[1],parsed_data[2]);
+        // morrisLine2.setData(parsed_data);
+        // let detailsensor = this.parsed_data.forEach(checkAnomaly);
+        // this.anomalyData = detailsensor;
+        thirdRequest();
+      }
+    
+    });
+
+   }
+
+   function thirdRequest()
+   {
+     
+    $.ajax({
+      url: "get_data_line.php?type=esp2", 
+      method: "GET", 
+      // datatype: "json",
+      success: function(data) {
+        // let data = data.replace(/(\r\n|\n|\r)/gm, "");
+        console.log(JSON.parse(data));
+        parsed_data[2] = JSON.parse(data);
         setDataMorris(parsed_data[0],parsed_data[1],parsed_data[2]);
-        let detailsensor = this.parsed_data[0].forEach(checkAnomaly);
+        // morrisLine3.setData(parsed_data);
+        let detailsensor = this.parsed_data.forEach(checkAnomaly);
         // this.anomalyData = detailsensor;
 
       }
     
     });
-   }, 4000);
-
+   }
    function checkAnomaly(item, index, arr) {
      console.log("item.S1=",item.S1);
       if(item.S1<=0)
