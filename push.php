@@ -17,15 +17,18 @@ $s11 = isset($_GET['s11'])?$_GET['s11']:0;//flowrate sensor
 $s12 = isset($_GET['s12'])?$_GET['s12']:0; //flowrate sensor
 
 $ip = isset($_GET['ip'])?$_GET['ip']:0;
+$type = isset($_GET['type'])?$_GET['type']:'pressure';
 
-if($s11 > 0 || $s12 > 0 )
+$start = "A";
+$end = "J";
+
+if($type != "pressure" )
 {
-    $s1 = $s2 = $s3 = $s4 = $s5 = $s6 = $s7 = $s8 = 10;
+    $start = "A";
+    $end = "D";
 }
-else{
-    $s1 = $s2 = $s3 = $s4 = $s5 = $s6 = $s7 = $s8 = 4;
-}
-$s10 = $s9 = 2.5;
+
+$now = (new \DateTime())->format('Y-m-d H:i:s');
 
 require __DIR__ . '/vendor/autoload.php';
 
@@ -39,22 +42,31 @@ $service = new Google_Service_Sheets($client);
 $spreadsheetId = '1HZ-lVFx6TenJiFlFEv0R3d9w3FpuRXeXwZAEirHdtpU';
 
 //read
-// $response = $service->spreadsheets_values->get($spreadsheetId, $range);
-// $values = $response->getValues();
-// var_dump($values);
 
-$rangeJumlah = '2021!Z1:Z1';
+$rangeJumlah = $type.'!Z1:Z1';
 $response = $service->spreadsheets_values->get($spreadsheetId, $rangeJumlah);
 $values = $response->getValues();
 $jml = $values[0][0];
 // var_dump($values);
-$range = '2021!A'.($jml+1).':L'.($jml+1);
+$range = $type.'!'.$start.($jml+1).':'.$end.($jml+1);
 
 //======================== append / insert
 // $values = [ [ generateRandomString(),generateRandomString(),generateRandomString()], ];
 
 // $values = [ [ rand_float(0,100),rand_float(0,100),rand_float(0,100)], ];
-$values = [ [ $s1,$s2,$s3,$s4,$s5,$s6,$s7,$s8,$s9,$s10,$s11,$s12,$ip ], ];
+$values = [];
+if($type == "pressure" )
+{
+    $values = [ [ $s1,$s2,$s3,$s4,$s5,$s6,$s7,$s8,$ip,$now ], ];
+}
+else if($type == "esp1" )
+{
+    $values = [ [ $s9,$s11,$ip,$now ], ];
+}
+else if($type == "esp2" )
+{
+    $values = [ [ $s10,$s12,$ip,$now ], ];
+}
 
 // echo rand_float(0,20)."\n";
 

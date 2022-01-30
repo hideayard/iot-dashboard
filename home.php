@@ -142,7 +142,7 @@ if($date1 > $date2)
 }
 else
 {
-  $countdowndata[0] = ". <h4 style='color: red;'>But it was Expired</h4>";
+  $countdowndata[0] = ". <h4 style='color: red;'>Maintenance Date is Today.!</h4>";
 }
 ///////
 $nextMaintenance[1] = date('d M Y', strtotime( $maintenance2[1] .' +2 months'));
@@ -159,7 +159,7 @@ if($date3 > $date2)
 }
 else
 {
-  $countdowndata[1] = ". <h4 style='color: red;'>But it was Expired</h4>";
+  $countdowndata[1] = ". <h4 style='color: red;'>Maintenance Date is Today.!</h4>";
 }
 ///////
 
@@ -287,10 +287,7 @@ $(function() {
    * Data and config for chartjs
    */
   'use strict';
-  var morrisLine1;
-  var morrisLine2;
-  var morrisLine3;
-
+  var morrisLine1, morrisLine2, morrisLine3, anomalyData, anomalyCount, parsed_data, anomalyflag = false;
   init_chart(<?=$json_hasil?>,<?=$json_hasil2?>,<?=$json_hasil3?>);
 
   function setDataMorris(data,data2,data3) {
@@ -352,19 +349,76 @@ $(function() {
   }
 
   setInterval(function(){ 
+    this.anomalyflag = true;
     $.ajax({
       url: "get_data_line.php", 
       method: "GET", 
       // datatype: "json",
       success: function(data) {
         // let data = data.replace(/(\r\n|\n|\r)/gm, "");
-        // console.log(JSON.parse(data));
-        let parsed_data = JSON.parse(data);
+        console.log(JSON.parse(data));
+        parsed_data = JSON.parse(data);
         setDataMorris(parsed_data[0],parsed_data[1],parsed_data[2]);
+        let detailsensor = this.parsed_data[0].forEach(checkAnomaly);
+        // this.anomalyData = detailsensor;
+
       }
     
     });
    }, 4000);
+
+   function checkAnomaly(item, index, arr) {
+     console.log("item.S1=",item.S1);
+      if(item.S1<=0)
+      {
+        // arr = arr+"<h5 style='color: red;'>Sensor "+(index+1)+" = "+item+"</h5>";
+        this.anomalyCount[index] += 1;
+        if(this.anomalyCount[index] >= 5)
+        {
+          this.anomalyflag = true;
+        }
+
+      }
+    
+  }
+
+   function getDetailSensor(item, index, arr) {
+     if(item<=0)
+     {
+      // arr[index] = item;
+      arr = arr+"<h5 style='color: red;'>Sensor "+(index+1)+" = "+item+"</h5>";
+      this.anomalyCount[index] += 1;
+      if(this.anomalyCount[index] >= 5)
+      {
+        this.anomalyflag = true;
+      }
+
+     }
+     else
+     {
+      // arr[index] = 0;
+      this.anomalyCount[index] = 0;
+     }
+    
+  }
+
+  //  //interval 60 sec to check 
+  //  setInterval(function(){ 
+  //     if(this.anomalyflag == true)
+  //     {
+  //       let detailsensor = this.anomalyData.forEach(getDetailSensor);
+  //       //'<hr> <h5 style=\'color: red;\'>Sensor 1 = -100</h5> <h5 style=\'color: red;\'>Sensor 2 = -30</h5><h5 style=\'color: red;\'>Sensor 3 = -20</h5>';
+  //       let infotext = 'System has detected anomaly data. <hr> '+detailsensor+' <hr> Please check the RO device.!';
+  //       this.anomalyflag = false;
+  //       Swal.fire(
+  //                 'Warning!',
+  //                 infotext,
+  //                 'warning'
+  //                 );
+  //     }
+     
+  //  }, 6000);
+
   });
 </script>
 
