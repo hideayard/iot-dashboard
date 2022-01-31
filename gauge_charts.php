@@ -1,15 +1,4 @@
-
 <?php
-session_start();
-error_reporting(E_ALL ^ E_NOTICE);
-
-require __DIR__ . '/vendor/autoload.php';
-require_once ('config/MysqliDb.php');
-include_once ("config/db.php");
-$db = new MysqliDb ('localhost', $dbuser, $dbpass, $dbname);
-include("config/functions.php");
-require_once ("jwt_token.php");
-require_once ("customhelper.php");
 
 $data=isset($_GET['data']) ? $_GET['data'] : null; 
 $i=isset($_GET['i']) ? ($_GET['i']-1) : 0; 

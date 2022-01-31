@@ -16,7 +16,7 @@ require_once ("customhelper.php");
 date_default_timezone_set("Asia/Jakarta");
 $tgl=date('Y-m-d');
 $today=date('d M Y');
-$page=isset($_GET['page']) ? $_GET['page'] : "home"; 
+$page=isset($_GET['page']) ? $_GET['page'] : "home_sql"; 
 $mode=isset($_GET['mode']) ? $_GET['mode'] : ""; 
 $d=isset($_GET['d']) ? $_GET['d'] : ""; 
 

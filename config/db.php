@@ -1,13 +1,13 @@
 <?php
 $dbuser = "root";
 $dbpass = "";
-$dbname = "dashboard_rochat";
+$dbname = "ro";
 
 // SQL server connection information
 $sql_details = array(
     'user' => 'root',
     'pass' => '',
-    'db'   => 'dashboard_rochat',
+    'db'   => 'ro',
     'host' => 'localhost'
 );
  

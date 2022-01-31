@@ -22,10 +22,35 @@ function check_active($key,$string)
  <!-- partial:partials/_sidebar.html -->
  <nav class="sidebar sidebar-offcanvas" id="sidebar">
         <ul class="nav">
-          <li class="nav-item">
+
+        <li class="nav-item">
             <a class="nav-link" data-toggle="collapse" href="#dashboard" aria-expanded="false" aria-controls="dashboard">
               <i class="icon-cog menu-icon"></i>
               <span class="menu-title">Dashboard</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="dashboard">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item">
+                  <a class="nav-link" href="home_sql" <?=check_active($page,'home_sql')?> >
+                    <i class="icon-grid menu-icon"></i>
+                    <span class="menu-title">Line</span>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="gauge_sql" <?=check_active($page,'gauge_sql')?> >
+                    <i class="icon-grid menu-icon"></i>
+                    <span class="menu-title">Gauge</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#dashboard" aria-expanded="false" aria-controls="dashboard">
+              <i class="icon-cog menu-icon"></i>
+              <span class="menu-title">Dashboard (old)</span>
               <i class="menu-arrow"></i>
             </a>
             <div class="collapse" id="dashboard">
