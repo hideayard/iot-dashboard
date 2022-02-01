@@ -647,10 +647,10 @@
         }
     ],
     "order": [[1, 'asc']],
-    "paging":   false,
+    "paging":   true,
     "ordering": true,
-    "info":     false,
-    "filter": false,
+    "info":     true,
+    "filter": true,
     columnDefs: [{
       orderable: false,
       className: 'select-checkbox',
@@ -661,6 +661,86 @@
       selector: 'td:first-child'
     }
   } );
+
+  var table_pressure = $('#pressure').DataTable( {
+    // "ajax": "js/data.txt",
+    "ajax": "get_table_pressure.php",
+    "columns": [
+        { "data": "id" },
+        { "data": "created_at" },
+        { "data": "s1" },
+        { "data": "s2" },
+        { "data": "s3" }, 
+        { "data": "s4" }, 
+        { "data": "s5" }, 
+        { "data": "s6" }, 
+        { "data": "s7" }, 
+        { "data": "s8" }, 
+    ],
+    "order": [[1, 'asc']],
+    "paging":   true,
+    "ordering": true,
+    "info":     true,
+    "filter": true,
+    "buttons": [
+           'copy', 'csv', 'excel', 'pdf', 'print'
+        ],
+    columnDefs: [{
+      orderable: false,
+      className: 'select-checkbox',
+      targets: 0
+    }],
+    select: {
+      style: 'os',
+      selector: 'td:first-child'
+    }
+  } );
+
+  var table_flow = $('#flowrate').DataTable( {
+    // "ajax": "js/data.txt",
+    "ajax": "get_table_flowrate.php",
+    "columns": [
+        { "data": "id" },
+        { "data": "created_at" },
+        { "data": "con" },
+        { "data": "flow" },
+        { "data": "remark" }, 
+    ],
+    "order": [[1, 'asc']],
+    "paging":   true,
+    "ordering": true,
+    "info":     true,
+    "filter": true,
+    "buttons": [
+           'copy', 'csv', 'excel', 'pdf', 'print'
+        ],
+    columnDefs: [{
+      orderable: false,
+      className: 'select-checkbox',
+      targets: 0
+    }],
+    select: {
+      style: 'os',
+      selector: 'td:first-child'
+    }
+  } );
+
+  $('#pressure tbody').on('click', 'td.details-control', function () {
+    var tr = $(this).closest('tr');
+    var row = table_pressure.row( tr );
+  
+    if ( row.child.isShown() ) {
+        // This row is already open - close it
+        row.child.hide();
+        tr.removeClass('shown');
+    }
+    else {
+        // Open this row
+        row.child( format(row.data()) ).show();
+        tr.addClass('shown');
+    }
+  } );
+
 $('#example tbody').on('click', 'td.details-control', function () {
   var tr = $(this).closest('tr');
   var row = table.row( tr );

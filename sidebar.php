@@ -48,12 +48,12 @@ function check_active($key,$string)
           </li>
 
           <li class="nav-item">
-            <a class="nav-link" data-toggle="collapse" href="#dashboard" aria-expanded="false" aria-controls="dashboard">
+            <a class="nav-link" data-toggle="collapse" href="#dashboard_old" aria-expanded="false" aria-controls="dashboard_old">
               <i class="icon-cog menu-icon"></i>
               <span class="menu-title">Dashboard (old)</span>
               <i class="menu-arrow"></i>
             </a>
-            <div class="collapse" id="dashboard">
+            <div class="collapse" id="dashboard_old">
               <ul class="nav flex-column sub-menu">
                 <li class="nav-item">
                   <a class="nav-link" href="index.php" <?=check_active($page,'home')?> >
@@ -71,7 +71,29 @@ function check_active($key,$string)
             </div>
           </li>
 
-          
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#list" aria-expanded="false" aria-controls="list">
+              <i class="icon-cog menu-icon"></i>
+              <span class="menu-title">List</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="list">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item">
+                  <a class="nav-link" href="pressure" <?=check_active($page,'pressure')?> >
+                    <i class="icon-grid menu-icon"></i>
+                    <span class="menu-title">Pressure</span>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="flowrate" <?=check_active($page,'flowrate')?> >
+                    <i class="icon-grid menu-icon"></i>
+                    <span class="menu-title">Flow Rate</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </li>
 
           <!-- <li class="nav-item">
             <a class="nav-link"  <?=check_active($page,'bot_setting')?>  href="bot_setting">
