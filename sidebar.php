@@ -74,7 +74,7 @@ function check_active($key,$string)
           <li class="nav-item">
             <a class="nav-link" data-toggle="collapse" href="#list" aria-expanded="false" aria-controls="list">
               <i class="icon-cog menu-icon"></i>
-              <span class="menu-title">List</span>
+              <span class="menu-title">Data Log</span>
               <i class="menu-arrow"></i>
             </a>
             <div class="collapse" id="list">

@@ -14,7 +14,7 @@ $db2 = new MysqliDb ('localhost', $dbuser, $dbpass, $dbname);
 $db2->autoReconnect = false;
 // $db->where ('remark', '');
 // $count = $db->getValue ("bot", "count(*)");
-$db->orderBy("created_at","Desc");
+$db->orderBy("id","Desc");
 $db->pageLimit = $limit;
 // $results_pressure = $db->get ('pressure');
 $page = 1;
@@ -109,7 +109,7 @@ foreach($results_pressure as $key => $value)
 $json_hasil1 = json_encode($formatted);
 // var_dump($json_hasil);
 ////==========================================
-$db2->orderBy("created_at","Desc");
+$db2->orderBy("id","Desc");
 $db2->where("remark", "esp1");
 $db2->pageLimit = $limit;
 $page = 1;
@@ -125,7 +125,7 @@ foreach($results_esp1 as $key => $value)
 }
 $json_hasil2 = json_encode($formatted2);
 ////==========================================
-$db2->orderBy("created_at","Desc");
+$db2->orderBy("id","Desc");
 $db2->where("remark", "esp2");
 $db2->pageLimit = $limit;
 $page = 1;
