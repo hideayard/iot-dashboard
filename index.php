@@ -127,6 +127,7 @@ function isEmpty(obj) {
     return "";
   }
   </script>
+  <script src="//unpkg.com/brain.js"></script>
 </head>
 <body>
   <div class="container-scroller">

@@ -154,7 +154,74 @@ $json_hasil3 = json_encode($formatted3);
 
 </div>
 <input type="hidden" id="anomaly"/>
+<input type="hidden" id="trainingData"/>
+<input type="hidden" id="lastData"/>
 <script>
+
+// var net = new brain.recurrent.LSTMTimeStep({
+//             inputSize: 8,
+//             hiddenLayers: [10],
+//             outputSize: 8,
+//             });
+
+const myTimeout = setTimeout(getDataML, 5000);
+
+function getDataML() {
+  $.ajax({
+      url: "get_data_training.php", 
+      method: "GET", 
+      // datatype: "json",
+      success: function(data) {
+        // let data = data.replace(/(\r\n|\n|\r)/gm, "");
+        console.log(JSON.parse(data));
+        parsed_data = JSON.parse(data);
+
+        document.getElementById('trainingData').value = JSON.stringify( parsed_data[0]) ;
+        document.getElementById('lastData').value =JSON.stringify( parsed_data[1]) ;
+
+        TrainingML(parsed_data[0],parsed_data[1]);
+
+      }
+    
+    });}
+
+
+function TrainingML(trainingData,lastData)
+{
+
+/////trial ML
+  const net = new brain.recurrent.LSTMTimeStep({
+              inputSize: 8,
+              hiddenLayers: [10],
+              outputSize: 8,
+              });
+
+  // var trainingDataExample = [[-100,3,4,1,2,-20,-10,-30],[-100,3,4,1,2,-20,-10,-30],[-100,3,4,1,2,-20,-10,-30],[-100,3,4,1,2,-20,-10,-30],[-100,3,4,1,2,-20,-10,-30],[-100,3,4,1,2,-20,-10,-30],[3.04,3.42,3.61,2.48,2.86,3.42,2.11,3.61],[3.04,3.42,3.61,2.48,2.86,3.42,2.11,3.61],[3.04,3.42,3.61,2.48,2.86,3.42,0.8,3.61],[3.04,3.42,3.61,2.48,2.86,3.61,0.8,3.61],[3.04,3.42,3.61,2.48,3.04,3.61,0.8,3.61],[3.04,3.42,3.61,2.3,3.04,3.61,0.8,3.61],[3.04,3.42,3.61,2.3,3.04,3.61,0.8,3.61],[3.04,3.04,3.61,2.3,3.04,3.61,0.8,3.61],[2.67,3.04,3.61,2.3,3.04,3.61,0.8,3.61],[2.67,3.04,3.61,2.3,3.04,3.61,0.8,3.42],[2.67,3.04,3.61,2.3,3.04,3.61,2.3,3.42],[2.67,3.04,3.61,2.3,3.04,3.61,2.3,3.42],[2.67,3.04,3.61,2.3,3.04,3.61,2.3,3.42],[2.67,3.04,3.61,2.48,3.04,3.61,2.3,3.42],[2.67,3.04,3.79,2.48,3.04,3.61,2.3,3.42],[2.67,3.42,3.79,2.48,3.04,3.61,2.3,3.42],[3.04,3.42,3.79,2.48,3.04,3.61,2.3,3.42],[3.04,3.42,3.79,2.48,3.04,3.61,2.3,3.42],[3.04,3.42,3.79,2.48,3.04,3.61,2.11,3.42],[3.04,3.42,3.79,2.48,3.04,3.61,2.11,3.42],[3.04,3.42,3.79,2.48,3.04,3.61,2.11,3.42],[3.04,3.42,3.79,2.3,3.04,3.61,2.11,3.42],[3.04,3.42,3.79,2.3,3.04,3.61,2.11,3.42],[3.04,3.42,3.79,2.3,3.04,3.61,2.11,3.42]];
+  // console.log("trainingDataExample=",trainingDataExample);
+  net.train(trainingData, { log: true, errorThresh: 0.09 });
+
+  // now we're cookin' with gas!
+  const forecast = net.forecast(
+      [ lastData ],
+      2
+  );
+
+  console.log('next 2 predictions', forecast);
+  console.log("this.trainingData=", JSON.parse( document.getElementById('trainingData').value) );
+  console.log("this.lastData=",JSON.parse( document.getElementById('lastData').value) );
+
+  trainingData.push(JSON.parse( document.getElementById('lastData').value));
+  net.train(trainingData, { log: true, errorThresh: 0.09 });
+
+  let forecast2 = net.forecast(
+      [ lastData ],
+      2
+  );
+  console.log('next 2 predictions', forecast2);
+
+///end trial ML
+}
+
 
 $(function() {
   /* ChartJS
@@ -165,6 +232,14 @@ $(function() {
   var morrisLine1, morrisLine2, morrisLine3, anomalyData, anomalyCount, anomalyflag = false;
   var parsed_data = [];
   var anomaly = [];
+  
+  // const net = new brain.recurrent.LSTMTimeStep({
+  //           inputSize: 8,
+  //           hiddenLayers: [10],
+  //           outputSize: 8,
+  //           });
+
+  // var trainingData = [];
   init_chart(<?=$json_hasil?>,<?=$json_hasil2?>,<?=$json_hasil3?>);
 
   function setDataMorris(data,data2,data3) {
@@ -226,6 +301,7 @@ $(function() {
     }
   }
 
+
   setInterval(function(){ 
     this.anomalyflag = true;
     $.ajax({
@@ -244,6 +320,20 @@ $(function() {
         console.log("this.anomaly=",this.anomaly);
         document.getElementById("anomaly").value = JSON.stringify( parsed_data[3]) ;
 
+        
+
+        
+  
+        // this.trainingData = parsed_data[4];
+        // console.log("this.trainingData=",this.trainingData);
+        // // this.TrainingML();
+        // this.net.train(trainingData, { log: true, errorThresh: 0.09 });
+        // const forecast = this.net.forecast(
+        //     [ [-100,3,4,1,2,-20,-10,-30] ],
+        //     2
+        // );
+
+        // console.log('next 2 predictions', forecast);
       }
     
     });
@@ -280,15 +370,16 @@ $(function() {
    }, 60000);
 
   });
-</script>
 
-<script>
-  window.console = window.console || function(t) {};
 
-  if (document.location.search.match(/type=embed/gi)) {
-    window.parent.postMessage("resize", "*");
-  }
+
+  // window.console = window.console || function(t) {};
+
+  // if (document.location.search.match(/type=embed/gi)) {
+  //   window.parent.postMessage("resize", "*");
+  // }
   
+
 </script>
 
 <script src='https://cdn.rawgit.com/vuejs/vue/v1.0.24/dist/vue.js'></script>
@@ -526,4 +617,6 @@ methods: {
   ///end of cd 2
 //# sourceURL=pen.js
     </script>
+
+
 
