@@ -1,8 +1,13 @@
 
 <?php
+$now = (new \DateTime())->format('Y-m-d');
+
 $limit = 30;
 $db = new MysqliDb ('localhost', $dbuser, $dbpass, $dbname);
 $db->autoReconnect = false;
+
+$db3 = new MysqliDb ('localhost', $dbuser, $dbpass, $dbname);
+$db3->autoReconnect = false;
 
 $db2 = new MysqliDb ('localhost', $dbuser, $dbpass, $dbname);
 $db2->autoReconnect = false;
@@ -67,6 +72,54 @@ $json_hasil2 = json_encode($formatted2);
 
 $json_hasil3 = json_encode($formatted3);
 
+
+$db3->where ('remark is not NULL');
+// $db3->where ('remark <> 1');
+// $db3->where ("DATE(created_at) = CURDATE()");
+$db3->orderBy("id","Desc");
+//DATE(created_at)
+// $results_pressure2 = $db2->arraybuilder()->paginate("pressure", $page);
+$maintenance1 = $db3->getOne("pressure",'DATE_FORMAT(remark, "%d %M %Y") as remark')["remark"];
+
+// var_dump($maintenance1);
+// $maintenance1 = $maintenance1['remark'];
+// $maintenance1 = checkMaintenance($hasillog1[0]['values']);
+if($maintenance1)
+{
+  // $nextMaintenance = date('d M Y', strtotime( $maintenance1 .' +2 months'));
+  $nextMaintenance = date('d M Y', strtotime( $maintenance1 ));
+  $date1 = new DateTime($nextMaintenance);
+  $date2 = new DateTime($now);
+  $countdowndata = "";
+  if($date1 > $date2)
+  {
+    $interval = $date1->diff($date2);
+    $countdowndata =  "";//$interval;
+  
+  }
+  else
+  {
+    $countdowndata = ". <h4 style='color: red;'>Maintenance Date is Today.!</h4>";
+  }
+}
+
+///////
+// $nextMaintenance[1] = date('d M Y', strtotime( $maintenance2[1] .' +2 months'));
+// $date3 = new DateTime($nextMaintenance[1]);
+// $date2 = new DateTime($now);
+// $countdowndata[1] = "";
+// if($date3 > $date2)
+// {
+//   $interval = $date3->diff($date2);
+//   $countdowndata[1] = "";//$interval;
+// }
+// else
+// {
+//   $countdowndata[1] = ". <h4 style='color: red;'>Maintenance Date is Today.!</h4>";
+// }
+///////
+
+
 ?>
 <link rel="stylesheet" href="css/countdown_flip.css">
 
@@ -129,22 +182,22 @@ $json_hasil3 = json_encode($formatted3);
     
     <div class="row">
 
-        <div class="col-lg-6 grid-margin stretch-card">
+        <!-- <div class="col-lg-6 grid-margin stretch-card">
           <div class="card">
             <div class="card-body">
               <h4 class="card-title">Device Maintenance Countdown (Device 1) </h4>
               <div id="countdown1"></div><br>
-              <p><h4 style="text-align: center;"><strong>Estimation for next maintenance schedule = <?=$nextMaintenance[0].$countdowndata[0]?></strong></h4></p>
+              <p><h4 style="text-align: center;"><strong>Estimation for next maintenance schedule = <?=$nextMaintenance.$countdowndata?></strong></h4></p>
             </div>
           </div>
-        </div>
+        </div> -->
 
         <div class="col-lg-6 grid-margin stretch-card">
           <div class="card">
             <div class="card-body">
               <h4 class="card-title">Machine Learning Predictive Maintenance</h4>
-              <div id="countdown2"></div><br>
-              <p><h4 style="text-align: center;"><strong>Estimation for Device Failure = <?=$nextMaintenance[1].$countdowndata[1]?></strong></h4></p>
+              <div id="countdown1"></div><br>
+              <p><h4 style="text-align: center;"><strong>Estimation for Device Failure = <?=$nextMaintenance.$countdowndata?></strong></h4></p>
             </div>
           </div>
         </div>
@@ -316,7 +369,7 @@ function TrainingML(trainingData,lastData,idData)
   }
   x = z/8;
   console.log("failureTimes=",failureTimes,"z=",z," rata2=",x);
-  document.getElementById('dayPrediction').value = (x*5)/60/24;
+  document.getElementById('dayPrediction').value = parseInt( (x*5)/60/24 );
   console.log(document.getElementById('dayPrediction').value);
   // for (i; i < forecast.length; i++) 
   // { 
@@ -434,9 +487,51 @@ if(idData)
     }); //end of ajax
 }
 
+var dataPredict = new FormData();
+  dataPredict.append("predict", document.getElementById('dayPrediction').value);
+
+if(document.getElementById('dayPrediction').value > 0)
+{
+  $.ajax({
+        type: "POST",
+        enctype: 'multipart/form-data',
+        url: "actionPredict.php",
+        data: dataPredict,
+        processData: false,
+        contentType: false,
+        cache: false,
+        timeout: 600000,
+        success: function (data) {
+      var rv;
+      try {
+        rv = JSON.parse(data);
+        console.log(rv.status,rv.info,rv);
+
+      } catch (e) {
+        //error data not json
+        Swal.fire(
+                'error!',
+                'Error Input Data, '+data,
+                'error'
+                );
+            
+            console.log("ERROR : ", data);
+      } 
+
+               
+
+    },
+    error: function (e) {
+
+        console.log("ERROR : ", e);
+
+    }
+    }); //end of ajax
+}
+
 Swal.fire({
-    icon: 'Prediction Process Success',
-    html: '<h4>Success!</h4>'
+    icon: 'success',
+    html: '<h4>Prediction Success!</h4>'
   });
 ///end trial ML
 }
@@ -691,7 +786,7 @@ var Countdown = new Vue({
 
   ready() {
     if (window['requestAnimationFrame']) {
-      this.date = '<?=date('Y-m-d', strtotime( $maintenance1[1] .' +2 months'))?>';
+      this.date = '<?=date('Y-m-d', strtotime( $maintenance1 ))?>';
       this.setCountdown(this.date);
       this.callback = this.callback || function () {};
       this.update();
@@ -739,96 +834,96 @@ var Countdown = new Vue({
     } } });
     //end of cd 1
 
-    var el2 = document.getElementById('countdown2');
+//     var el2 = document.getElementById('countdown2');
 
-    var Countdown2 = new Vue({
+//     var Countdown2 = new Vue({
 
-el: el2,
+// el: el2,
 
-template: ` 
-<div class="flip-clock" data-date="2022-02-11" @click="update">
-  <tracker 
-    v-for="tracker in trackers"
-    :property="tracker"
-    :time="time"
-    v-ref:trackers
-  ></tracker>
-</div>
-`,
+// template: ` 
+// <div class="flip-clock" data-date="2022-02-11" @click="update">
+//   <tracker 
+//     v-for="tracker in trackers"
+//     :property="tracker"
+//     :time="time"
+//     v-ref:trackers
+//   ></tracker>
+// </div>
+// `,
 
-props: ['date', 'callback'],
+// props: ['date', 'callback'],
 
-data: () => ({
-  time: {},
-  i: 0,
-  trackers: ['Days', 'Hours', 'Minutes', 'Seconds'] //'Random', 
-}),
+// data: () => ({
+//   time: {},
+//   i: 0,
+//   trackers: ['Days', 'Hours', 'Minutes', 'Seconds'] //'Random', 
+// }),
 
-components: {
-  Tracker },
-
-
-beforeDestroy() {
-  if (window['cancelAnimationFrame']) {
-    cancelAnimationFrame(this.frame);
-  }
-},
-
-watch: {
-  'date': function (newVal) {
-    this.setCountdown(newVal);
-  } },
+// components: {
+//   Tracker },
 
 
-ready() {
-  if (window['requestAnimationFrame']) {
-    this.date = '<?=date('Y-m-d', strtotime( $maintenance2[1] .' +2 months'))?>';
-    this.setCountdown(this.date);
-    console.log("this.date=",this.date);
-    this.callback = this.callback || function () {};
-    this.update();
-  }
-},
+// beforeDestroy() {
+//   if (window['cancelAnimationFrame']) {
+//     cancelAnimationFrame(this.frame);
+//   }
+// },
 
-methods: {
+// watch: {
+//   'date': function (newVal) {
+//     this.setCountdown(newVal);
+//   } },
 
-  setCountdown(date) {
 
-    if (date) {
-      this.countdown = moment(date, 'YYYY-MM-DD HH:mm:ss');
-    } else {
-      this.countdown = moment().endOf('day'); //this.$el.getAttribute('data-date');
-      // this.countdown = this.$el.getAttribute('data-date');
-    }
-  },
+// ready() {
+//   if (window['requestAnimationFrame']) {
+//     this.date = '<?=date('Y-m-d', strtotime( $maintenance2[1] .' +2 months'))?>';
+//     this.setCountdown(this.date);
+//     console.log("this.date=",this.date);
+//     this.callback = this.callback || function () {};
+//     this.update();
+//   }
+// },
 
-  update() {
-    this.frame = requestAnimationFrame(this.update.bind(this));
-    if (this.i++ % 10) {return;}
-    var t = moment(new Date());
-    // Calculation adapted from https://www.sitepoint.com/build-javascript-countdown-timer-no-dependencies/
-    if (this.countdown) {
+// methods: {
 
-      t = this.countdown.diff(t);
+//   setCountdown(date) {
 
-      //t = this.countdown.diff(t);//.getTime();
-      //console.log(t);
-      this.time.Days = Math.floor(t / (1000 * 60 * 60 * 24));
-      this.time.Hours = Math.floor(t / (1000 * 60 * 60) % 24);
-      this.time.Minutes = Math.floor(t / 1000 / 60 % 60);
-      this.time.Seconds = Math.floor(t / 1000 % 60);
-    } else {
-      this.time.Days = undefined;
-      this.time.Hours = t.hours() % 13;
-      this.time.Minutes = t.minutes();
-      this.time.Seconds = t.seconds();
-    }
+//     if (date) {
+//       this.countdown = moment(date, 'YYYY-MM-DD HH:mm:ss');
+//     } else {
+//       this.countdown = moment().endOf('day'); //this.$el.getAttribute('data-date');
+//       // this.countdown = this.$el.getAttribute('data-date');
+//     }
+//   },
 
-    this.time.Total = t;
+//   update() {
+//     this.frame = requestAnimationFrame(this.update.bind(this));
+//     if (this.i++ % 10) {return;}
+//     var t = moment(new Date());
+//     // Calculation adapted from https://www.sitepoint.com/build-javascript-countdown-timer-no-dependencies/
+//     if (this.countdown) {
 
-    this.$broadcast('time', this.time);
-    return this.time;
-  } } });
+//       t = this.countdown.diff(t);
+
+//       //t = this.countdown.diff(t);//.getTime();
+//       //console.log(t);
+//       this.time.Days = Math.floor(t / (1000 * 60 * 60 * 24));
+//       this.time.Hours = Math.floor(t / (1000 * 60 * 60) % 24);
+//       this.time.Minutes = Math.floor(t / 1000 / 60 % 60);
+//       this.time.Seconds = Math.floor(t / 1000 % 60);
+//     } else {
+//       this.time.Days = undefined;
+//       this.time.Hours = t.hours() % 13;
+//       this.time.Minutes = t.minutes();
+//       this.time.Seconds = t.seconds();
+//     }
+
+//     this.time.Total = t;
+
+//     this.$broadcast('time', this.time);
+//     return this.time;
+//   } } });
   ///end of cd 2
 //# sourceURL=pen.js
     </script>
