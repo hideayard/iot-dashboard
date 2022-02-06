@@ -8,15 +8,18 @@ $countAnomaly = array();
 $Anomaly = array();
 $countAnomaly['s1'] = $countAnomaly['s2'] = $countAnomaly['s3'] = $countAnomaly['s4'] = $countAnomaly['s5'] = $countAnomaly['s6'] = $countAnomaly['s7'] = $countAnomaly['s8'] = 0;
 $db = new MysqliDb ('localhost', $dbuser, $dbpass, $dbname);
+$db2 = new MysqliDb ('localhost', $dbuser, $dbpass, $dbname);
 $db->autoReconnect = false;
+$db2->autoReconnect = false;
 
 $db->orderBy("id","Desc");
 $db->pageLimit = $limit;
 $page = 1;
 
+$db->where ('(status is NULL or status <> 0)');
 $results_pressure = $db->arraybuilder()->paginate("pressure", $page);
 
-$dataTraining = $lastData = [];
+$dataTraining = $lastData = $lastTrainingData = [];
 $i=0;
 foreach($results_pressure as $key => $value)
 {
@@ -29,7 +32,21 @@ foreach($results_pressure as $key => $value)
     $i++;
 }
 
-echo json_encode(array($dataTraining,$lastData));
+
+$db2->where ('status is NULL');
+$db2->where ("DATE(created_at) = CURDATE()");
+$db2->orderBy("id","Asc");
+//DATE(created_at)
+// $results_pressure2 = $db2->arraybuilder()->paginate("pressure", $page);
+$results_pressure2 = $db2->getOne("pressure",["id","s1","s2","s3","s4","s5","s6","s7","s8","created_at","remark","status"]);
+// $results_pressure2 = $db2->getOne ("pressure", "DATE(created_at), CURDATE()");
+$i=0;
+
+$lastTrainingData = array(floatval($results_pressure2['s1']) , floatval($results_pressure2['s2']) , floatval($results_pressure2['s3']) , floatval($results_pressure2['s4']) , floatval($results_pressure2['s5']) , floatval($results_pressure2['s6']) , floatval($results_pressure2['s7']) , floatval($results_pressure2['s8']));
+
+
+
+echo json_encode(array($dataTraining,$lastData,$results_pressure2["id"],$lastTrainingData));
 
 // return array($json_hasil1,$json_hasil2,$json_hasil3);
 ?>

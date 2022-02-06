@@ -142,9 +142,9 @@ $json_hasil3 = json_encode($formatted3);
         <div class="col-lg-6 grid-margin stretch-card">
           <div class="card">
             <div class="card-body">
-              <h4 class="card-title">Device Maintenance Countdown (Device 2) </h4>
+              <h4 class="card-title">Machine Learning Predictive Maintenance</h4>
               <div id="countdown2"></div><br>
-              <p><h4 style="text-align: center;"><strong>Estimation for next maintenance schedule = <?=$nextMaintenance[1].$countdowndata[1]?></strong></h4></p>
+              <p><h4 style="text-align: center;"><strong>Estimation for Device Failure = <?=$nextMaintenance[1].$countdowndata[1]?></strong></h4></p>
             </div>
           </div>
         </div>
@@ -156,6 +156,7 @@ $json_hasil3 = json_encode($formatted3);
 <input type="hidden" id="anomaly"/>
 <input type="hidden" id="trainingData"/>
 <input type="hidden" id="lastData"/>
+<input type="hidden" id="dayPrediction"/>
 <script>
 
 // var net = new brain.recurrent.LSTMTimeStep({
@@ -165,7 +166,9 @@ $json_hasil3 = json_encode($formatted3);
 //             });
 
 const myTimeout = setTimeout(getDataML, 5000);
+var sweet_loader = '<div class="sweet_loader"><svg viewBox="0 0 140 140" width="140" height="140"><g class="outline"><path d="m 70 28 a 1 1 0 0 0 0 84 a 1 1 0 0 0 0 -84" stroke="rgba(0,0,0,0.1)" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></g><g class="circle"><path d="m 70 28 a 1 1 0 0 0 0 84 a 1 1 0 0 0 0 -84" stroke="#71BBFF" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-dashoffset="200" stroke-dasharray="300"></path></g></svg></div>';
 
+let timerInterval;
 function getDataML() {
   $.ajax({
       url: "get_data_training.php", 
@@ -179,14 +182,84 @@ function getDataML() {
         document.getElementById('trainingData').value = JSON.stringify( parsed_data[0]) ;
         document.getElementById('lastData').value =JSON.stringify( parsed_data[1]) ;
 
-        TrainingML(parsed_data[0],parsed_data[1]);
+        // let timerInterval;
 
+        // Swal.fire({
+        //   title: 'Please Wait, Training In Progress!',
+        //   html: 'Machine Learning Complete Training in <b></b> milliseconds.',
+        //   timer: 10000,
+        //   timerProgressBar: true,
+        //   didOpen: () => {
+        //     Swal.showLoading()
+        //     const b = Swal.getHtmlContainer().querySelector('b')
+        //     timerInterval = setInterval(() => {
+        //       b.textContent = Swal.getTimerLeft()
+        //     }, 100)
+        //   },
+        //   willClose: () => {
+        //     clearInterval(timerInterval)
+        //   }
+        // }).then((result) => {
+        //   /* Read more about handling dismissals below */
+        //   if (result.dismiss === Swal.DismissReason.timer) {
+        //     console.log('I was closed by the timer')
+        //   }
+        // });
+
+        if(parsed_data[2])
+        {
+          TrainingML(parsed_data[0],parsed_data[3],parsed_data[2]);
+        }
+        else
+        {
+          TrainingML(parsed_data[0],parsed_data[1],parsed_data[2]);
+        }
+        // Swal.fire({
+        //   html: '<h4>Loading...</h4>',
+        //   didOpen: () => {
+        //       Swal.showLoading()
+        //   }
+        //   // onRender: function() {
+        //   //   $('.swal2-content').prepend(sweet_loader);
+        //   // }
+        // });
+
+          // Swal({
+          //   title: 'Now loading',
+          //   allowEscapeKey: false,
+          //   allowOutsideClick: false,
+          //   timer: 2000,
+          //   onOpen: () => {
+          //     Swal.showLoading();
+          //   }
+          // }).then(
+          //   () => {},
+          //   (dismiss) => {
+          //     if (dismiss === 'timer') {
+          //       console.log('closed by timer!!!!');
+          //       Swal({ 
+          //         title: 'Finished!',
+          //         type: 'success',
+          //         timer: 2000,
+          //         showConfirmButton: false
+          //       })
+          //     }
+          //   }
+          // )
+        //showLoading();
+
+        // document.getElementById("fire")
+        //   .addEventListener('click', (event) => {
+        //     showLoading();
+        //   });
+          
       }
     
-    });}
+    });
+  }
 
 
-function TrainingML(trainingData,lastData)
+function TrainingML(trainingData,lastData,idData)
 {
 
 /////trial ML
@@ -194,6 +267,8 @@ function TrainingML(trainingData,lastData)
               inputSize: 8,
               hiddenLayers: [10],
               outputSize: 8,
+              learningRate: 0.01,
+              decayRate: 0.0099,
               });
 
   // var trainingDataExample = [[-100,3,4,1,2,-20,-10,-30],[-100,3,4,1,2,-20,-10,-30],[-100,3,4,1,2,-20,-10,-30],[-100,3,4,1,2,-20,-10,-30],[-100,3,4,1,2,-20,-10,-30],[-100,3,4,1,2,-20,-10,-30],[3.04,3.42,3.61,2.48,2.86,3.42,2.11,3.61],[3.04,3.42,3.61,2.48,2.86,3.42,2.11,3.61],[3.04,3.42,3.61,2.48,2.86,3.42,0.8,3.61],[3.04,3.42,3.61,2.48,2.86,3.61,0.8,3.61],[3.04,3.42,3.61,2.48,3.04,3.61,0.8,3.61],[3.04,3.42,3.61,2.3,3.04,3.61,0.8,3.61],[3.04,3.42,3.61,2.3,3.04,3.61,0.8,3.61],[3.04,3.04,3.61,2.3,3.04,3.61,0.8,3.61],[2.67,3.04,3.61,2.3,3.04,3.61,0.8,3.61],[2.67,3.04,3.61,2.3,3.04,3.61,0.8,3.42],[2.67,3.04,3.61,2.3,3.04,3.61,2.3,3.42],[2.67,3.04,3.61,2.3,3.04,3.61,2.3,3.42],[2.67,3.04,3.61,2.3,3.04,3.61,2.3,3.42],[2.67,3.04,3.61,2.48,3.04,3.61,2.3,3.42],[2.67,3.04,3.79,2.48,3.04,3.61,2.3,3.42],[2.67,3.42,3.79,2.48,3.04,3.61,2.3,3.42],[3.04,3.42,3.79,2.48,3.04,3.61,2.3,3.42],[3.04,3.42,3.79,2.48,3.04,3.61,2.3,3.42],[3.04,3.42,3.79,2.48,3.04,3.61,2.11,3.42],[3.04,3.42,3.79,2.48,3.04,3.61,2.11,3.42],[3.04,3.42,3.79,2.48,3.04,3.61,2.11,3.42],[3.04,3.42,3.79,2.3,3.04,3.61,2.11,3.42],[3.04,3.42,3.79,2.3,3.04,3.61,2.11,3.42],[3.04,3.42,3.79,2.3,3.04,3.61,2.11,3.42]];
@@ -203,22 +278,166 @@ function TrainingML(trainingData,lastData)
   // now we're cookin' with gas!
   const forecast = net.forecast(
       [ lastData ],
-      2
+      1
   );
 
-  console.log('next 2 predictions', forecast);
+  console.log('next n predictions', forecast);
   console.log("this.trainingData=", JSON.parse( document.getElementById('trainingData').value) );
   console.log("this.lastData=",JSON.parse( document.getElementById('lastData').value) );
 
-  trainingData.push(JSON.parse( document.getElementById('lastData').value));
-  net.train(trainingData, { log: true, errorThresh: 0.09 });
+  var forecastN = forecast;
+  var i=0,n=0,z=0,x=0;
+  var degradationValueTotal = 0;
+  var degradationValue = 0.0001;
+  var failureTimes = [];
+  for (i; i < forecast[0].length; i++) 
+  {   
+    var n=0;
+    while((forecastN[0][i]>=3 && forecastN[0][i]<=10))
+    {
+      if(forecastN[0][i] < 6.25)
+      { //jika data trend keatas maka di tambahkan degradation
+        forecastN[0][i] -= degradationValue;
+      }
+      else
+      {
+        forecastN[0][i] += degradationValue;
+      }
+      
+      if(forecastN[0][i]<3 || forecastN[0][i]>10)
+      {
+        console.log("detected",forecastN[0][i],"in",n); 
+        failureTimes[i] = n;
+        z+=n;
+      }
+      if(++n>100000)break;
+    }
+    // console.log("forecastN=",forecastN,"i=",i);
+  }
+  x = z/8;
+  console.log("failureTimes=",failureTimes,"z=",z," rata2=",x);
+  document.getElementById('dayPrediction').value = (x*5)/60/24;
+  console.log(document.getElementById('dayPrediction').value);
+  // for (i; i < forecast.length; i++) 
+  // { 
+  //   forecastN[0] = forecast[i][0] - degradationValueTotal;
+  //   degradationValueTotal+=degradationValue;
+  //   if(forecastN[0]<3 || forecastN[0]>10)
+  //   {
+  //     console.log("detected",forecastN[0],"in",i); 
 
-  let forecast2 = net.forecast(
-      [ lastData ],
-      2
-  );
-  console.log('next 2 predictions', forecast2);
+  //   }
+  // }
+  // console.log("After Degradate forecast1000=",forecastN );
 
+  // const forecastN = net.forecast(
+  //     [ lastData ],
+  //     1000
+  // );
+  // console.log("this.forecast1000=",forecastN );
+
+  // let calculatedForecast = forecastN.forEach(getDetailSensor);
+  // var i=0;
+  // var degradationValueTotal = 0;
+  // var degradationValue = 0.01;
+  // for (i; i < forecastN.length; i++) 
+  // { 
+  //   forecastN[i][0] = forecastN[i][0] - degradationValueTotal;
+  //   degradationValueTotal+=degradationValue;
+  //   if(forecastN[i][0]<3 || forecastN[i][0]>10)
+  //   {
+  //     console.log("detected",forecastN[i][0],"in",i); 
+
+  //   }
+  // }
+  // console.log("After Degradate forecast1000=",forecastN );
+
+
+  // const dataPredict = {data:forecast};
+  var dataPredict = new FormData();
+  dataPredict.append("predict", forecast);
+  dataPredict.append("id", idData);
+
+if(idData)
+{
+  $.ajax({
+        type: "POST",
+        enctype: 'multipart/form-data',
+        url: "actionSavePredict.php",
+        data: dataPredict,
+        processData: false,
+        contentType: false,
+        cache: false,
+        timeout: 600000,
+        success: function (data) {
+      var rv;
+      try {
+        rv = JSON.parse(data);
+        console.log(rv.status,rv.info,rv);
+        // if(isEmpty(rv))
+        // {
+        //         Swal.fire(
+        //         'Info!',
+        //         'No Data!',
+        //         'info'
+        //         );
+        //     console.log("NO DATA : ", data);
+        // }
+        // else
+        // {
+        //   if(rv.status==true)
+        //   {
+        //     Swal.fire(
+        //         'Success!',
+        //         'Success Input Data!',
+        //         'success'
+        //         );
+        //     console.log("SUCCESS : ", data);
+        //     // setTimeout(function(){ window.location="users"; }, 1000);
+        //     $("#btnSubmit").html('<span class="fa fa-paper-plane"></span> Submit');
+        //     // $("#roleform")[0].reset();
+
+        //   }
+        //   else 
+        //   {
+        //     Swal.fire(
+        //         'error!',
+        //         'Error Input Data, '+data,
+        //         'error'
+        //         );
+            
+        //     console.log("ERROR : ", data);
+        //     $("#btnSubmit").html('<span class="fa fa-paper-plane"></span> Submit');
+
+        //   }
+
+        // }
+      } catch (e) {
+        //error data not json
+        Swal.fire(
+                'error!',
+                'Error Input Data, '+data,
+                'error'
+                );
+            
+            console.log("ERROR : ", data);
+      } 
+
+               
+
+    },
+    error: function (e) {
+
+        console.log("ERROR : ", e);
+
+    }
+    }); //end of ajax
+}
+
+Swal.fire({
+    icon: 'Prediction Process Success',
+    html: '<h4>Success!</h4>'
+  });
 ///end trial ML
 }
 
@@ -320,10 +539,6 @@ $(function() {
         console.log("this.anomaly=",this.anomaly);
         document.getElementById("anomaly").value = JSON.stringify( parsed_data[3]) ;
 
-        
-
-        
-  
         // this.trainingData = parsed_data[4];
         // console.log("this.trainingData=",this.trainingData);
         // // this.TrainingML();
@@ -378,7 +593,6 @@ $(function() {
   // if (document.location.search.match(/type=embed/gi)) {
   //   window.parent.postMessage("resize", "*");
   // }
-  
 
 </script>
 
@@ -570,6 +784,7 @@ ready() {
   if (window['requestAnimationFrame']) {
     this.date = '<?=date('Y-m-d', strtotime( $maintenance2[1] .' +2 months'))?>';
     this.setCountdown(this.date);
+    console.log("this.date=",this.date);
     this.callback = this.callback || function () {};
     this.update();
   }

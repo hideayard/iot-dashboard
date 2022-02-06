@@ -14,6 +14,7 @@ $db2 = new MysqliDb ('localhost', $dbuser, $dbpass, $dbname);
 $db2->autoReconnect = false;
 // $db->where ('remark', '');
 // $count = $db->getValue ("bot", "count(*)");
+$db->where ('(status is NULL or status <> 0)');
 $db->orderBy("id","Desc");
 $db->pageLimit = $limit;
 // $results_pressure = $db->get ('pressure');
@@ -41,7 +42,7 @@ foreach($results_pressure as $key => $value)
 
   $i++;
   
-  if(floatval($value['s1']) < 0)
+  if((floatval($value['s1']) < 3) || (floatval($value['s1']) > 10))
   {
     $Anomaly['s1'] = false;  
     if(++$countAnomaly['s1'] > 5)
@@ -49,7 +50,7 @@ foreach($results_pressure as $key => $value)
         $Anomaly['s1'] = floatval($value['s1']);
     }
   }
-  if(floatval($value['s2']) < 0)
+  if((floatval($value['s2']) < 3) || (floatval($value['s2']) > 10))
   {
     $Anomaly['s2'] = false;  
     if(++$countAnomaly['s2'] > 5)
@@ -57,7 +58,7 @@ foreach($results_pressure as $key => $value)
         $Anomaly['s2'] = floatval($value['s2']);
     }
   }
-  if(floatval($value['s3']) < 0)
+  if((floatval($value['s3']) < 3) || (floatval($value['s3']) > 10))
   {
     $Anomaly['s3'] = false;  
     if(++$countAnomaly['s3'] > 5)
@@ -65,7 +66,7 @@ foreach($results_pressure as $key => $value)
         $Anomaly['s3'] = floatval($value['s3']);
     }
   }
-  if(floatval($value['s4']) < 0)
+  if((floatval($value['s4']) < 3) || (floatval($value['s4']) > 10))
   {
     $Anomaly['s4'] = false;  
     if(++$countAnomaly['s4'] > 5)
@@ -73,7 +74,7 @@ foreach($results_pressure as $key => $value)
         $Anomaly['s4'] = floatval($value['s4']);
     }
   }
-  if(floatval($value['s5']) < 0)
+  if((floatval($value['s5']) < 3) || (floatval($value['s5']) > 10))
   {
     $Anomaly['s5'] = false;  
     if(++$countAnomaly['s5'] > 5)
@@ -81,7 +82,7 @@ foreach($results_pressure as $key => $value)
         $Anomaly['s5'] = floatval($value['s5']);
     }
   }
-  if(floatval($value['s6']) < 0)
+  if((floatval($value['s6']) < 3) || (floatval($value['s6']) > 10))
   {
     $Anomaly['s6'] = false;  
     if(++$countAnomaly['s6'] > 5)
@@ -89,7 +90,7 @@ foreach($results_pressure as $key => $value)
         $Anomaly['s6'] = floatval($value['s6']);
     }
   }
-  if(floatval($value['s7']) < 0)
+  if((floatval($value['s7']) < 3) || (floatval($value['s7']) > 10))
   {
     $Anomaly['s7'] = false;  
     if(++$countAnomaly['s7'] > 5)
@@ -97,7 +98,7 @@ foreach($results_pressure as $key => $value)
         $Anomaly['s7'] = floatval($value['s7']);
     }
   }
-  if(floatval($value['s8']) < 0)
+  if((floatval($value['s8']) < 3) || (floatval($value['s8']) > 10))
   {
     $Anomaly['s8'] = false;  
     if(++$countAnomaly['s8'] > 5)
@@ -106,6 +107,11 @@ foreach($results_pressure as $key => $value)
     }
   }
 }
+
+foreach ($Anomaly as $key => $value)
+    if ($value == FALSE)
+        unset($Anomaly[$key]);
+
 $json_hasil1 = json_encode($formatted);
 // var_dump($json_hasil);
 ////==========================================
@@ -121,6 +127,24 @@ foreach($results_esp1 as $key => $value)
   $formatted2[$i]['S1'] = floatval($value['con']);
   $formatted3[$i]['S1'] = floatval($value['flow']);
   $formatted2[$i]['yaxis'] = (string)($value['created_at']);
+
+  if((floatval($value['con']) < 0.7 ) || (floatval($value['con']) > 0.9 ))
+  {
+    $Anomaly['con1'] = false;  
+    if(++$countAnomaly['con1'] > 5)
+    {
+        $Anomaly['con1'] = floatval($value['con']);
+    }
+  }
+  if((floatval($value['flow']) < 0) || (floatval($value['flow']) > 8))
+  {
+    $Anomaly['flow1'] = false;  
+    if(++$countAnomaly['flow1'] > 5)
+    {
+        $Anomaly['flow1'] = floatval($value['flow']);
+    }
+  }
+  
   $i++;
 }
 $json_hasil2 = json_encode($formatted2);
@@ -137,11 +161,29 @@ foreach($results_esp2 as $key => $value)
   $formatted2[$i]['S2'] = floatval($value['con']);
   $formatted3[$i]['S2'] = floatval($value['flow']);
   $formatted3[$i]['yaxis'] = (string)($value['created_at']);
+
+  if((floatval($value['con']) < 0.7 ) || (floatval($value['con']) > 0.9 ))
+  {
+    $Anomaly['con2'] = false;  
+    if(++$countAnomaly['con2'] > 5)
+    {
+        $Anomaly['con2'] = floatval($value['con']);
+    }
+  }
+  if((floatval($value['flow']) < 0) || (floatval($value['flow']) > 8))
+  {
+    $Anomaly['flow2'] = false;  
+    if(++$countAnomaly['flow2'] > 5)
+    {
+        $Anomaly['flow2'] = floatval($value['flow']);
+    }
+  }
+
   $i++;
 }
 $json_hasil3 = json_encode($formatted3);
 
-echo json_encode(array($formatted,$formatted2,$formatted3,$Anomaly,$dataTraining));
+echo json_encode(array($formatted,$formatted2,$formatted3,$Anomaly));
 
 // return array($json_hasil1,$json_hasil2,$json_hasil3);
 ?>
