@@ -19,7 +19,7 @@ $s7 = (isset($_GET['s7']) && $_GET['s7'] > 0 )?$_GET['s7']:"";//pressure sensor
 $s8 = (isset($_GET['s8']) && $_GET['s8'] > 0 )?$_GET['s8']:"";//pressure sensor
 
 $con = isset($_GET['con'])?$_GET['con']:"";//conductivity sensor
-$flow = isset($_GET['flow'])?$_GET['flow']:"";//conductivity sensor
+$flow = isset($_GET['flow'])?$_GET['flow']:"";//flow sensor
 
 $ip = isset($_GET['ip'])?$_GET['ip']:"";
 $type = isset($_GET['type'])?$_GET['type']:'pressure';
