@@ -2,3 +2,4 @@ uploads/
 vendors/
 vendor/
 config/
+config/db.php
