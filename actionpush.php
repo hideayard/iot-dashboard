@@ -19,9 +19,6 @@ $s7 = (isset($_GET['s7']) && $_GET['s7'] > 0 )?$_GET['s7']:"";//flow rate sensor
 $s8 = (isset($_GET['s8']) && $_GET['s8'] > 0 )?$_GET['s8']:"";//conductivity sensor
 $s9 = (isset($_GET['s9']) && $_GET['s9'] > 0 )?$_GET['s9']:"";//conductivity sensor
 
-// $con = isset($_GET['con'])?$_GET['con']:"";//conductivity sensor
-// $flow = isset($_GET['flow'])?$_GET['flow']:"";//flow sensor
-
 $ip = isset($_GET['ip'])?$_GET['ip']:"";
 $remark = isset($_GET['remark'])?$_GET['remark']:"";
 
@@ -84,14 +81,10 @@ $data += array('created_at' => $tgl);
 if($db->insert ('data_sensors', $data))
 {
     echo json_encode( array("status" => true,"info" => $type,"messages" => $message, "data" => $data  ) );
-    // $message = 1;//"Insert berhasil!";
 }
 else
 {
-    // echo 0;
     echo json_encode( array("status" => false,"info" => $db->getLastError(),"messages" => $message, "data" => $data  ) );
-
-
 }
 
 ?>
