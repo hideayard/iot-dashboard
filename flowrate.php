@@ -1,50 +1,9 @@
 
-
-<?php
-//auto
-// $q_column = "SELECT `COLUMN_NAME` FROM `INFORMATION_SCHEMA`.`COLUMNS` WHERE `TABLE_SCHEMA`='smart' AND `TABLE_NAME`='sesi'";
-// $d_columns = $db->rawQuery($q_column);
-//end of auto
-// if($tipe_user!="ADMIN")//$tipe_user
-// {
-//   echo "<script>Swal.fire(
-//                       'Info!',
-//                       'You are not authorized!',
-//                       'info'
-//                       );
-//                 console.log('You Are Not Authorized ');
-//                 setTimeout(function(){ window.location='home'; }, 1000);
-//                 </script>";
-
-// }
-// $table = "settings";
-// $txt_field= "settings_id,settings_type, settings_name, settings_value, settings_status";
-// $txt_label = "Type,Name,Value,Status";
-// $q_field = explode(",",$txt_field);
-// $q_label = explode(",",$txt_label);
-// $i=1;
-// // $query = "select ".$q_field[0] ." as " .$q_label[0];
-// // for($i;$i<count($q_field);$i++)
-// // {
-// //     $query .= ",".$q_field[$i] ." as " .$q_label[$i];
-// // }
-// // $query .= " from $table";
-// $query = "SELECT $txt_field FROM $table "; 
-
-// $data = $db->rawQuery($query);
-// // var_dump($data);die;
-// // if(!check_role($page,'*'))
-// // {
-// //   echo "<script>alert('You are not permitted!!!');window.location='home';</script>";
-// // }
-?>
-  <!-- DataTables -->
-  <link rel="stylesheet" href="plugins/datatables-bs4/css/dataTables.bootstrap4.css">
-  <!-- Theme style -->
+<!-- DataTables -->
+<link rel="stylesheet" href="plugins/datatables-bs4/css/dataTables.bootstrap4.css">
+<!-- Theme style -->
 
 <div class="wrapper">
-
-
 
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
@@ -80,9 +39,10 @@
                             <tr>
                                 <th>ID#</th>
                                 <th>Date</th>
-                                <th>Conductivity</th>
-                                <th>Flow Rate</th>
-                                <th>Device</th>
+                                <th>Flow Rate 1</th>
+                                <th>Flow Rate 2</th>
+                                <th>Conductivity 1</th>
+                                <th>Conductivity 2</th>
                               <th></th>
                             </tr>
                           </thead>

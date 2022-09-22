@@ -18,7 +18,7 @@ $db->pageLimit = $limit;
 // $results_pressure = $db->get ('pressure');
 $page = 1;
 // set page limit to 2 results per page. 20 by default
-$results_pressure = $db->arraybuilder()->paginate("pressure", $page);
+$results_pressure = $db->arraybuilder()->paginate("data_sensors", $page);
 // echo "showing $page out of " . $db->totalPages;
 // var_dump($results_pressure);
 $i=0;
@@ -30,48 +30,24 @@ foreach($results_pressure as $key => $value)
   $formatted[$i]['S'.++$j] = floatval($value['s3']);
   $formatted[$i]['S'.++$j] = floatval($value['s4']);
   $formatted[$i]['S'.++$j] = floatval($value['s5']);
-  $formatted[$i]['S'.++$j] = floatval($value['s6']);
-  $formatted[$i]['S'.++$j] = floatval($value['s7']);
-  $formatted[$i]['S'.++$j] = floatval($value['s8']);
+  
+  $formatted2[$i]['S1'] = floatval($value['s8']);
+  $formatted2[$i]['S2'] = floatval($value['s6']);
+  $formatted2[$i]['yaxis'] = (string)($value['created_at']);
+
+  $formatted3[$i]['S1'] = floatval($value['s9']);
+  $formatted3[$i]['S2'] = floatval($value['s7']);
+  $formatted3[$i]['yaxis'] = (string)($value['created_at']);
+  // $formatted[$i]['S'.++$j] = floatval($value['s6']); flow
+  // $formatted[$i]['S'.++$j] = floatval($value['s7']); flow
+  // $formatted[$i]['S'.++$j] = floatval($value['s8']); cond
+  // $formatted[$i]['S'.++$j] = floatval($value['s9']);cond
   $formatted[$i]['yaxis'] = (string)($value['created_at']);
   $i++;
 }
 $json_hasil = json_encode($formatted);
-// var_dump($json_hasil);
-////==========================================
-$db2->orderBy("id","Desc");
-$db2->where("remark", "esp1");
-$db2->pageLimit = $limit;
-$page = 1;
-$results_esp1 = $db2->arraybuilder()->paginate("flowrate", $page);
-
-$i=0;
-foreach($results_esp1 as $key => $value)
-{
-  $formatted2[$i]['S1'] = floatval($value['con']);
-  $formatted3[$i]['S1'] = floatval($value['flow']);
-  $formatted2[$i]['yaxis'] = (string)($value['created_at']);
-  $i++;
-}
-////==========================================
-$db2->orderBy("id","Desc");
-$db2->where("remark", "esp2");
-$db2->pageLimit = $limit;
-$page = 1;
-$results_esp2 = $db2->arraybuilder()->paginate("flowrate", $page);
-
-$i=0;
-foreach($results_esp2 as $key => $value)
-{
-  $formatted2[$i]['S2'] = floatval($value['con']);
-  $formatted3[$i]['S2'] = floatval($value['flow']);
-  $formatted3[$i]['yaxis'] = (string)($value['created_at']);
-  $i++;
-}
 $json_hasil2 = json_encode($formatted2);
-
 $json_hasil3 = json_encode($formatted3);
-
 
 $db3->where ('remark is not NULL');
 // $db3->where ('remark <> 1');
@@ -79,7 +55,7 @@ $db3->where ('remark is not NULL');
 $db3->orderBy("id","Desc");
 //DATE(created_at)
 // $results_pressure2 = $db2->arraybuilder()->paginate("pressure", $page);
-$maintenance1 = $db3->getOne("pressure",'DATE_FORMAT(remark, "%d %M %Y") as remark')["remark"];
+$maintenance1 = $db3->getOne("data_sensors",'DATE_FORMAT(remark, "%d %M %Y") as remark')["remark"];
 
 // var_dump($maintenance1);
 // $maintenance1 = $maintenance1['remark'];
