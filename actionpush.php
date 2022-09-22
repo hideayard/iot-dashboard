@@ -80,7 +80,7 @@ $data += array('created_at' => $tgl);
 
 if($db->insert ('data_sensors', $data))
 {
-    echo json_encode( array("status" => true,"info" => $type,"messages" => $message, "data" => $data  ) );
+    echo json_encode( array("status" => true,"info" => "success","messages" => $message, "data" => $data  ) );
 }
 else
 {
