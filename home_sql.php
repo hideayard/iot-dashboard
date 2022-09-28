@@ -54,7 +54,7 @@ $db3->where ('remark is not NULL');
 // $db3->where ("DATE(created_at) = CURDATE()");
 $db3->orderBy("id","Desc");
 //DATE(created_at)
-// $results_pressure2 = $db2->arraybuilder()->paginate("pressure", $page);
+// $results_pressure2 = $db2->arraybuilder()->paginate("data_sensors", $page);
 $maintenance1 = $db3->getOne("data_sensors",'DATE_FORMAT(remark, "%d %M %Y") as remark')["remark"];
 
 // var_dump($maintenance1);
@@ -157,16 +157,6 @@ if($maintenance1)
 
     
     <div class="row">
-
-        <!-- <div class="col-lg-6 grid-margin stretch-card">
-          <div class="card">
-            <div class="card-body">
-              <h4 class="card-title">Device Maintenance Countdown (Device 1) </h4>
-              <div id="countdown1"></div><br>
-              <p><h4 style="text-align: center;"><strong>Estimation for next maintenance schedule = <?=$nextMaintenance.$countdowndata?></strong></h4></p>
-            </div>
-          </div>
-        </div> -->
 
         <div class="col-lg-6 grid-margin stretch-card">
           <div class="card">
@@ -293,9 +283,9 @@ function TrainingML(trainingData,lastData,idData)
 
 /////trial ML
   const net = new brain.recurrent.LSTMTimeStep({
-              inputSize: 8,
+              inputSize: 5,
               hiddenLayers: [10],
-              outputSize: 8,
+              outputSize: 5,
               learningRate: 0.01,
               decayRate: 0.0099,
               });
@@ -550,7 +540,7 @@ $(function() {
         lineColors: ['#63CF72', '#F36368', '#76C1FA', '#FABA66','#2FF3E0', '#F8D210', '#FA26A0', '#F51720'],
         data: arr_data,
         xkey: 'yaxis',
-        ykeys: ['S1','S2','S3','S4','S5','S6','S7','S8'],
+        ykeys: ['S1','S2','S3','S4','S5'],
         labels: ['Sensor 1 (Psi)','Sensor 2 (Psi)','Sensor 3 (Psi)','Sensor 4 (Psi)','Sensor 5 (Psi)','Sensor 6 (Psi)','Sensor 7 (Psi)','Sensor 8 (Psi)'],
         parseTime:false,
         hideHover:true,

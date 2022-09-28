@@ -16,7 +16,7 @@ $db->pageLimit = $limit;
 // $results_pressure = $db->get ('pressure');
 $page = 1;
 // set page limit to 2 results per page. 20 by default
-$results_pressure = $db->arraybuilder()->paginate("pressure", $page);
+$results_pressure = $db->arraybuilder()->paginate("data_sensors", $page);
 // echo "showing $page out of " . $db->totalPages;
 // var_dump($results_pressure);
 $i=0;
@@ -28,9 +28,9 @@ foreach($results_pressure as $key => $value)
   $formatted[] = floatval($value['s4']);
 
   $formatted2[] = floatval($value['s5']);
-  $formatted2[] = floatval($value['s6']);
-  $formatted2[] = floatval($value['s7']);
-  $formatted2[] = floatval($value['s8']);
+  // $formatted2[] = floatval($value['s6']);
+  // $formatted2[] = floatval($value['s7']);
+  // $formatted2[] = floatval($value['s8']);
   $i++;
 }
 $json_hasil = json_encode($formatted);

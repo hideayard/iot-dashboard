@@ -27,7 +27,7 @@ $db->pageLimit = $limit;
 // $results_pressure = $db->get ('pressure');
 $page = 1;
 // set page limit to 2 results per page. 20 by default
-$results_pressure = $db->arraybuilder()->paginate("pressure", $page);
+$results_pressure = $db->arraybuilder()->paginate("data_sensors", $page);
 // echo "showing $page out of " . $db->totalPages;
 // var_dump($results_pressure);
 $i=0;
@@ -39,9 +39,9 @@ foreach($results_pressure as $key => $value)
     $formatted[] = floatval($value['s4']);
 
     $formatted2[] = floatval($value['s5']);
-    $formatted2[] = floatval($value['s6']);
-    $formatted2[] = floatval($value['s7']);
-    $formatted2[] = floatval($value['s8']);
+    // $formatted2[] = floatval($value['s6']);
+    // $formatted2[] = floatval($value['s7']);
+    // $formatted2[] = floatval($value['s8']);
     $i++;
 }
 $json_hasil = json_encode($formatted);
@@ -51,7 +51,7 @@ $db2->orderBy("created_at","Desc");
 $db2->where("remark", "esp1");
 $db2->pageLimit = $limit;
 $page = 1;
-$results_esp1 = $db2->arraybuilder()->paginate("flowrate", $page);
+$results_esp1 = $db2->arraybuilder()->paginate("data_sensors", $page);
 
 $i=0;
 foreach($results_esp1 as $key => $value)
@@ -63,10 +63,10 @@ foreach($results_esp1 as $key => $value)
 $json_hasil2 = json_encode($formatted2);
 ////==========================================
 $db2->orderBy("created_at","Desc");
-$db2->where("remark", "esp2");
+// $db2->where("remark", "esp2");
 $db2->pageLimit = $limit;
 $page = 1;
-$results_esp2 = $db2->arraybuilder()->paginate("flowrate", $page);
+$results_esp2 = $db2->arraybuilder()->paginate("data_sensors", $page);
 
 $i=0;
 foreach($results_esp2 as $key => $value)

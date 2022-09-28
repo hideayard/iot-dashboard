@@ -1,4 +1,6 @@
 <?php
+ini_set('display_errors', 0);
+
 require __DIR__ . '/vendor/autoload.php';
 
 require_once ('config/MysqliDb.php');
@@ -20,7 +22,7 @@ $db->pageLimit = $limit;
 // $results_pressure = $db->get ('pressure');
 $page = 1;
 // set page limit to 2 results per page. 20 by default
-$results_pressure = $db->arraybuilder()->paginate("pressure", $page);
+$results_pressure = $db->arraybuilder()->paginate("data_sensors", $page);
 // echo "showing $page out of " . $db->totalPages;
 // var_dump($results_pressure);
 $dataTraining = [];
@@ -33,13 +35,9 @@ foreach($results_pressure as $key => $value)
   $formatted[$i]['S'.++$j] = floatval($value['s3']);
   $formatted[$i]['S'.++$j] = floatval($value['s4']);
   $formatted[$i]['S'.++$j] = floatval($value['s5']);
-  $formatted[$i]['S'.++$j] = floatval($value['s6']);
-  $formatted[$i]['S'.++$j] = floatval($value['s7']);
-  $formatted[$i]['S'.++$j] = floatval($value['s8']);
   $formatted[$i]['yaxis'] = (string)($value['created_at']);
   $j=0;
-  $dataTraining[$i] = array(floatval($value['s1']) , floatval($value['s2']) , floatval($value['s3']) , floatval($value['s4']) , floatval($value['s5']) , floatval($value['s6']) , floatval($value['s7']) , floatval($value['s8']));
-
+  $dataTraining[$i] = array(floatval($value['s1']) , floatval($value['s2']) , floatval($value['s3']) , floatval($value['s4']) , floatval($value['s5']) );
   $i++;
   
   if((floatval($value['s1']) < 3) || (floatval($value['s1']) > 10))
@@ -82,30 +80,7 @@ foreach($results_pressure as $key => $value)
         $Anomaly['s5'] = floatval($value['s5']);
     }
   }
-  if((floatval($value['s6']) < 3) || (floatval($value['s6']) > 10))
-  {
-    $Anomaly['s6'] = false;  
-    if(++$countAnomaly['s6'] > 5)
-    {
-        $Anomaly['s6'] = floatval($value['s6']);
-    }
-  }
-  if((floatval($value['s7']) < 3) || (floatval($value['s7']) > 10))
-  {
-    $Anomaly['s7'] = false;  
-    if(++$countAnomaly['s7'] > 5)
-    {
-        $Anomaly['s7'] = floatval($value['s7']);
-    }
-  }
-  if((floatval($value['s8']) < 3) || (floatval($value['s8']) > 10))
-  {
-    $Anomaly['s8'] = false;  
-    if(++$countAnomaly['s8'] > 5)
-    {
-        $Anomaly['s8'] = floatval($value['s8']);
-    }
-  }
+
 }
 
 foreach ($Anomaly as $key => $value)
@@ -116,32 +91,34 @@ $json_hasil1 = json_encode($formatted);
 // var_dump($json_hasil);
 ////==========================================
 $db2->orderBy("id","Desc");
-$db2->where("remark", "esp1");
+// $db2->where("remark", "esp1");
 $db2->pageLimit = $limit;
 $page = 1;
-$results_esp1 = $db2->arraybuilder()->paginate("flowrate", $page);
+$results_esp1 = $db2->arraybuilder()->paginate("data_sensors", $page);
 
 $i=0;
 foreach($results_esp1 as $key => $value)
 {
-  $formatted2[$i]['S1'] = floatval($value['con']);
-  $formatted3[$i]['S1'] = floatval($value['flow']);
+  //6 & 7 -> flow
+  // 8 & 9 -> con
+  $formatted2[$i]['S1'] = floatval($value['s8']);
+  $formatted3[$i]['S1'] = floatval($value['s6']);
   $formatted2[$i]['yaxis'] = (string)($value['created_at']);
 
-  if((floatval($value['con']) < 0.7 ) || (floatval($value['con']) > 0.9 ))
+  if((floatval($value['s8']) < 0.7 ) || (floatval($value['s8']) > 0.9 ))
   {
     $Anomaly['con1'] = false;  
     if(++$countAnomaly['con1'] > 5)
     {
-        $Anomaly['con1'] = floatval($value['con']);
+        $Anomaly['con1'] = floatval($value['s8']);
     }
   }
-  if((floatval($value['flow']) < 0) || (floatval($value['flow']) > 8))
+  if((floatval($value['s6']) < 0) || (floatval($value['s6']) > 8))
   {
     $Anomaly['flow1'] = false;  
     if(++$countAnomaly['flow1'] > 5)
     {
-        $Anomaly['flow1'] = floatval($value['flow']);
+        $Anomaly['flow1'] = floatval($value['s6']);
     }
   }
   
@@ -158,24 +135,24 @@ $results_esp2 = $db2->arraybuilder()->paginate("flowrate", $page);
 $i=0;
 foreach($results_esp2 as $key => $value)
 {
-  $formatted2[$i]['S2'] = floatval($value['con']);
-  $formatted3[$i]['S2'] = floatval($value['flow']);
+  $formatted2[$i]['S2'] = floatval($value['s8']);
+  $formatted3[$i]['S2'] = floatval($value['s6']);
   $formatted3[$i]['yaxis'] = (string)($value['created_at']);
 
-  if((floatval($value['con']) < 0.7 ) || (floatval($value['con']) > 0.9 ))
+  if((floatval($value['s8']) < 0.7 ) || (floatval($value['s8']) > 0.9 ))
   {
     $Anomaly['con2'] = false;  
     if(++$countAnomaly['con2'] > 5)
     {
-        $Anomaly['con2'] = floatval($value['con']);
+        $Anomaly['con2'] = floatval($value['s8']);
     }
   }
-  if((floatval($value['flow']) < 0) || (floatval($value['flow']) > 8))
+  if((floatval($value['s6']) < 0) || (floatval($value['s6']) > 8))
   {
     $Anomaly['flow2'] = false;  
     if(++$countAnomaly['flow2'] > 5)
     {
-        $Anomaly['flow2'] = floatval($value['flow']);
+        $Anomaly['flow2'] = floatval($value['s6']);
     }
   }
 
