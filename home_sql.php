@@ -283,9 +283,9 @@ function TrainingML(trainingData,lastData,idData)
 
 /////trial ML
   const net = new brain.recurrent.LSTMTimeStep({
-              inputSize: 5,
+              inputSize: 9,
               hiddenLayers: [10],
-              outputSize: 5,
+              outputSize: 9,
               learningRate: 0.01,
               decayRate: 0.0099,
               });

@@ -16,7 +16,7 @@ $db2 = new MysqliDb ('localhost', $dbuser, $dbpass, $dbname);
 $db2->autoReconnect = false;
 // $db->where ('remark', '');
 // $count = $db->getValue ("bot", "count(*)");
-$db->where ('(status is NULL or status <> 0)');
+$db->where ('(status is NULL or  status <> 0)');
 $db->orderBy("id","Desc");
 $db->pageLimit = $limit;
 // $results_pressure = $db->get ('pressure');

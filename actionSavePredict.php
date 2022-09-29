@@ -32,6 +32,7 @@ if($id!="")
     $data += array('s'.($i+2) => floatval($predict[++$i]) );
     $data += array('s'.($i+2) => floatval($predict[++$i]) );
     $data += array('s'.($i+2) => floatval($predict[++$i]) );
+    $data += array('s'.($i+2) => floatval($predict[++$i]) );
 
     $data += array('remark' => $label[$i]);
     $data += array('created_by' => 0);
@@ -47,7 +48,7 @@ if($id!="")
     $data2 += array('status' => 1);
     $db2->where ('id', $id);
 
-    if(!$db2->update ('pressure', $data2))
+    if(!$db2->update ('data_sensors', $data2))
     {
         $message = 'Update failed. Error: '. $db2->getLastError();
     }
