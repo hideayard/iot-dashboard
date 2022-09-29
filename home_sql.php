@@ -31,12 +31,12 @@ foreach($results_pressure as $key => $value)
   $formatted[$i]['S'.++$j] = floatval($value['s4']);
   $formatted[$i]['S'.++$j] = floatval($value['s5']);
   
-  $formatted2[$i]['S1'] = floatval($value['s8']);
-  $formatted2[$i]['S2'] = floatval($value['s6']);
+  $formatted2[$i]['S1'] = floatval($value['s8']); //cond
+  $formatted2[$i]['S2'] = floatval($value['s6']); //flow
   $formatted2[$i]['yaxis'] = (string)($value['created_at']);
 
-  $formatted3[$i]['S1'] = floatval($value['s9']);
-  $formatted3[$i]['S2'] = floatval($value['s7']);
+  $formatted3[$i]['S1'] = floatval($value['s9']); //cond
+  $formatted3[$i]['S2'] = floatval($value['s7']); //flow
   $formatted3[$i]['yaxis'] = (string)($value['created_at']);
   // $formatted[$i]['S'.++$j] = floatval($value['s6']); flow
   // $formatted[$i]['S'.++$j] = floatval($value['s7']); flow
@@ -75,6 +75,7 @@ if($maintenance1)
   }
   else
   {
+    $nextMaintenance = date('d M Y', strtotime( $now ));
     $countdowndata = ". <h4 style='color: red;'>Maintenance Date is Today.!</h4>";
   }
 }
@@ -497,7 +498,8 @@ if(document.getElementById('dayPrediction').value > 0)
 
 Swal.fire({
     icon: 'success',
-    html: '<h4>Prediction Success!</h4>'
+    html: '<h4>Prediction Success!</h4>',
+    timer:4000
   });
 ///end trial ML
 }
@@ -635,11 +637,12 @@ $(function() {
         // let detailsensor = this.anomaly.forEach(getDetailSensor);
         let infotext = 'System has detected anomaly data. <hr> '+detailsensor+' <hr> Please check the RO device.!';
         this.anomalyflag = false;
-        Swal.fire(
-                  'Warning!',
-                  infotext,
-                  'warning'
-                  );
+        Swal.fire({
+                  icon: 'warning',
+                  title: 'Warning!',
+                  text: infotext,
+                  timer: 5000
+                });
                   document.getElementById("anomaly").value = "";
       }
      
