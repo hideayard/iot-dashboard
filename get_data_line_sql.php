@@ -19,15 +19,15 @@ $db2->autoReconnect = false;
 $db->where ('(status is NULL or  status <> 0)');
 $db->orderBy("id","Desc");
 $db->pageLimit = $limit;
-// $results_pressure = $db->get ('pressure');
+// $result_sensors = $db->get ('pressure');
 $page = 1;
 // set page limit to 2 results per page. 20 by default
-$results_pressure = $db->arraybuilder()->paginate("data_sensors", $page);
+$result_sensors = $db->arraybuilder()->paginate("data_sensors", $page);
 // echo "showing $page out of " . $db->totalPages;
-// var_dump($results_pressure);
+// var_dump($result_sensors);
 $dataTraining = [];
 $i=0;
-foreach($results_pressure as $key => $value)
+foreach($result_sensors as $key => $value)
 {
   $j=0;
   $formatted[$i]['S'.++$j] = floatval($value['s1']);
@@ -81,29 +81,14 @@ foreach($results_pressure as $key => $value)
     }
   }
 
-}
-
-foreach ($Anomaly as $key => $value)
-    if ($value == FALSE)
-        unset($Anomaly[$key]);
-
-$json_hasil1 = json_encode($formatted);
-// var_dump($json_hasil);
-////==========================================
-$db2->orderBy("id","Desc");
-// $db2->where("remark", "esp1");
-$db2->pageLimit = $limit;
-$page = 1;
-$results_esp1 = $db2->arraybuilder()->paginate("data_sensors", $page);
-
-$i=0;
-foreach($results_esp1 as $key => $value)
-{
-  //6 & 7 -> flow
+  // 6 & 7 -> flow
   // 8 & 9 -> con
-  $formatted2[$i]['S1'] = floatval($value['s8']);
-  $formatted3[$i]['S1'] = floatval($value['s6']);
+  $formatted2[$i]['S1'] = floatval($value['s6']);
+  $formatted2[$i]['S2'] = floatval($value['s7']);
+  $formatted3[$i]['S1'] = floatval($value['s8']);
+  $formatted3[$i]['S2'] = floatval($value['s9']);
   $formatted2[$i]['yaxis'] = (string)($value['created_at']);
+  $formatted3[$i]['yaxis'] = (string)($value['created_at']);
 
   if((floatval($value['s8']) < 0.7 ) || (floatval($value['s8']) > 0.9 ))
   {
@@ -113,6 +98,16 @@ foreach($results_esp1 as $key => $value)
         $Anomaly['con1'] = floatval($value['s8']);
     }
   }
+
+  if((floatval($value['s9']) < 0.7 ) || (floatval($value['s9']) > 0.9 ))
+  {
+    $Anomaly['con2'] = false;  
+    if(++$countAnomaly['con2'] > 5)
+    {
+        $Anomaly['con2'] = floatval($value['s9']);
+    }
+  }
+ 
   if((floatval($value['s6']) < 0) || (floatval($value['s6']) > 8))
   {
     $Anomaly['flow1'] = false;  
@@ -121,46 +116,117 @@ foreach($results_esp1 as $key => $value)
         $Anomaly['flow1'] = floatval($value['s6']);
     }
   }
-  
-  $i++;
-}
-$json_hasil2 = json_encode($formatted2);
-////==========================================
-$db2->orderBy("id","Desc");
-$db2->where("remark", "esp2");
-$db2->pageLimit = $limit;
-$page = 1;
-$results_esp2 = $db2->arraybuilder()->paginate("flowrate", $page);
 
-$i=0;
-foreach($results_esp2 as $key => $value)
-{
-  $formatted2[$i]['S2'] = floatval($value['s8']);
-  $formatted3[$i]['S2'] = floatval($value['s6']);
-  $formatted3[$i]['yaxis'] = (string)($value['created_at']);
-
-  if((floatval($value['s8']) < 0.7 ) || (floatval($value['s8']) > 0.9 ))
-  {
-    $Anomaly['con2'] = false;  
-    if(++$countAnomaly['con2'] > 5)
-    {
-        $Anomaly['con2'] = floatval($value['s8']);
-    }
-  }
-  if((floatval($value['s6']) < 0) || (floatval($value['s6']) > 8))
+  if((floatval($value['s7']) < 0) || (floatval($value['s7']) > 8))
   {
     $Anomaly['flow2'] = false;  
     if(++$countAnomaly['flow2'] > 5)
     {
-        $Anomaly['flow2'] = floatval($value['s6']);
+        $Anomaly['flow2'] = floatval($value['s7']);
     }
   }
 
-  $i++;
 }
+
+foreach ($Anomaly as $key => $value)
+    if ($value == FALSE)
+        unset($Anomaly[$key]);
+
+$json_hasil1 = json_encode($formatted);
+// var_dump($json_hasil);
+////==========================================
+// $db2->orderBy("id","Desc");
+// // $db2->where("remark", "esp1");
+// $db2->pageLimit = $limit;
+// $page = 1;
+// $results_esp1 = $db2->arraybuilder()->paginate("data_sensors", $page);
+
+// $i=0;
+// foreach($results_esp1 as $key => $value)
+// {
+//   // 6 & 7 -> flow
+//   // 8 & 9 -> con
+//   $formatted2[$i]['S1'] = floatval($value['s6']);
+//   $formatted2[$i]['S2'] = floatval($value['s7']);
+//   // $formatted3[$i]['S1'] = floatval($value['s6']);
+//   $formatted2[$i]['yaxis'] = (string)($value['created_at']);
+
+//   if((floatval($value['s8']) < 0.7 ) || (floatval($value['s8']) > 0.9 ))
+//   {
+//     $Anomaly['con1'] = false;  
+//     if(++$countAnomaly['con1'] > 5)
+//     {
+//         $Anomaly['con1'] = floatval($value['s8']);
+//     }
+//   }
+
+//   if((floatval($value['s9']) < 0.7 ) || (floatval($value['s9']) > 0.9 ))
+//   {
+//     $Anomaly['con2'] = false;  
+//     if(++$countAnomaly['con2'] > 5)
+//     {
+//         $Anomaly['con2'] = floatval($value['s9']);
+//     }
+//   }
+ 
+//   if((floatval($value['s6']) < 0) || (floatval($value['s6']) > 8))
+//   {
+//     $Anomaly['flow1'] = false;  
+//     if(++$countAnomaly['flow1'] > 5)
+//     {
+//         $Anomaly['flow1'] = floatval($value['s6']);
+//     }
+//   }
+
+//   if((floatval($value['s7']) < 0) || (floatval($value['s7']) > 8))
+//   {
+//     $Anomaly['flow2'] = false;  
+//     if(++$countAnomaly['flow2'] > 5)
+//     {
+//         $Anomaly['flow2'] = floatval($value['s7']);
+//     }
+//   }
+  
+//   $i++;
+// }
+$json_hasil2 = json_encode($formatted2);
+////==========================================
+// $db2->orderBy("id","Desc");
+// // $db2->where("remark", "RO2");
+// $db2->pageLimit = $limit;
+// $page = 1;
+// $results_esp2 = $db2->arraybuilder()->paginate("data_sensors", $page);
+
+// $i=0;
+// foreach($results_esp2 as $key => $value)
+// {
+//   $formatted2[$i]['S2'] = floatval($value['s8']);
+//   $formatted3[$i]['S2'] = floatval($value['s6']);
+//   $formatted3[$i]['yaxis'] = (string)($value['created_at']);
+
+//   if((floatval($value['s8']) < 0.7 ) || (floatval($value['s8']) > 0.9 ))
+//   {
+//     $Anomaly['con2'] = false;  
+//     if(++$countAnomaly['con2'] > 5)
+//     {
+//         $Anomaly['con2'] = floatval($value['s8']);
+//     }
+//   }
+//   if((floatval($value['s6']) < 0) || (floatval($value['s6']) > 8))
+//   {
+//     $Anomaly['flow2'] = false;  
+//     if(++$countAnomaly['flow2'] > 5)
+//     {
+//         $Anomaly['flow2'] = floatval($value['s6']);
+//     }
+//   }
+
+//   $i++;
+// }
 $json_hasil3 = json_encode($formatted3);
 
 echo json_encode(array($formatted,$formatted2,$formatted3,$Anomaly));
+// echo json_encode(array($formatted,$formatted2,$Anomaly));
 
 // return array($json_hasil1,$json_hasil2,$json_hasil3);
 ?>
