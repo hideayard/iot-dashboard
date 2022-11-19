@@ -1,9 +1,7 @@
 <?php
 session_start();
 error_reporting(E_ALL ^ E_NOTICE);
-// ini_set('display_errors', 1);
-// ini_set('display_startup_errors', 1);
-// error_reporting(E_ALL);
+
 require __DIR__ . '/vendor/autoload.php';
 
 require_once ('config/MysqliDb.php');
@@ -17,13 +15,14 @@ date_default_timezone_set("Asia/Jakarta");
 $tgl=date('Y-m-d');
 $today=date('d M Y');
 $page=isset($_GET['page']) ? $_GET['page'] : "home_sql"; 
-$mode=isset($_GET['mode']) ? $_GET['mode'] : ""; 
+$mode=isset($_GET['mode']) ? $_GET['mode'] : "";
+
 $d=isset($_GET['d']) ? $_GET['d'] : ""; 
 
 if(!isset($_SESSION['u']))
 {
   header('Location:login.php');
-  exit(); //hentikan eksekusi kode di login_proses.php
+  exit(); 
 }
 $skrg = date("Y-m-d h:i:sa");
 
@@ -83,13 +82,10 @@ switch ($page)
 <!-- SweetAlert2 -->
 <link rel="stylesheet" href="vendors/sweetalert2/sweetalert2.min.css">
 
-<!-- <script src="js/jquery/jquery.min.js"></script> -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css">
 <!-- jQuery Modal -->
-<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css" /> -->
 <style>
   .ex1 {
   min-height: 400px;
@@ -127,15 +123,12 @@ function isEmpty(obj) {
     return "";
   }
   </script>
-  <script src="//unpkg.com/brain.js"></script>
+  <script src="js/ml.js"></script>
 </head>
 <body>
   <div class="container-scroller">
-    <!-- partial:partials/_navbar.html -->
     <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
       <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
-        <!-- <a class="navbar-brand brand-logo mr-5" href="home"><img src="images/rochat.png" alt="logo" class="mr-2" /></a>
-        <a class="navbar-brand brand-logo-mini" href="home"><img src="images/rochat_icon.png" alt="logo"/></a> -->
       </div>
       <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
         <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
@@ -239,7 +232,6 @@ function isEmpty(obj) {
       <div class="main-panel">
           <!-- main content -->
         <?php 
-        // require_once ("dashboard.php"); 
         
         if (file_exists("".$page.".php")) 
               {

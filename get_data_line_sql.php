@@ -17,6 +17,10 @@ $db2->autoReconnect = false;
 // $db->where ('remark', '');
 // $count = $db->getValue ("bot", "count(*)");
 $db->where ('(status is NULL or  status <> 0)');
+
+$node=isset($_GET['node']) ? $_GET['node'] : 'RO1';
+$db->where ('remark', $node);
+
 $db->orderBy("id","Desc");
 $db->pageLimit = $limit;
 // $result_sensors = $db->get ('pressure');

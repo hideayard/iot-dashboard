@@ -1,5 +1,6 @@
 
 <?php
+
 $now = (new \DateTime())->format('Y-m-d');
 
 $limit = 30;
@@ -20,7 +21,10 @@ $db->pageLimit = $limit;
 $page = 1;
 
 $nodes = $db0->get("node");
-// var_dump($nodes);die;
+$node=isset($_GET['node']) ? $_GET['node'] : 'RO1';
+
+$db->where ('remark', $node);
+
 // set page limit to 2 results per page. 20 by default
 $results_pressure = $db->arraybuilder()->paginate("data_sensors", $page);
 
@@ -63,7 +67,7 @@ if($maintenance1)
   if($date1 > $date2)
   {
     $interval = $date1->diff($date2);
-    $countdowndata =  "";//$interval;
+    $countdowndata =  "";
   }
   else
   {
@@ -85,17 +89,17 @@ if($maintenance1)
           </div>
           <div class="col-12 col-xl-4">
             <div class="justify-content-end d-flex">
-            <div class="dropdown flex-md-grow-1 flex-xl-grow-0">
-              <button class="btn btn-sm btn-light bg-white dropdown-toggle" type="button" id="dropdownMenuDate2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                <i class="mdi mdi-calendar"></i> Today (<?=$today?>)
-              </button>
-              <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuDate2">
-                <a class="dropdown-item" href="#">January - March</a>
-                <a class="dropdown-item" href="#">March - June</a>
-                <a class="dropdown-item" href="#">June - August</a>
-                <a class="dropdown-item" href="#">August - November</a>
+              <div class="dropdown flex-md-grow-1 flex-xl-grow-0">
+                <button class="btn btn-sm btn-light bg-white dropdown-toggle" type="button" id="dropdownMenuDate2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                  <i class="mdi mdi-calendar"></i> Today (<?=$today?>)
+                </button>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuDate2">
+                  <a class="dropdown-item" href="#">January - March</a>
+                  <a class="dropdown-item" href="#">March - June</a>
+                  <a class="dropdown-item" href="#">June - August</a>
+                  <a class="dropdown-item" href="#">August - November</a>
+                </div>
               </div>
-            </div>
             </div>
           </div>
         </div>
@@ -103,6 +107,28 @@ if($maintenance1)
     </div>
     <div class="row">
         <div class="col-lg-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+              <label>Select Node : </label>
+              <div class="dropdown flex-md-grow-1 flex-xl-grow-0">
+                <button class="btn btn-sm btn-light bg-white dropdown-toggle" type="button" id="dropdownMenuDate2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                  <i class="mdi mdi-calendar"></i> Node (<?=$node?>)
+                </button>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuDate2">
+                  <?php 
+                  foreach($nodes as $value) {
+                    echo '<a class="dropdown-item" href="index.php?page=home_sql&node='.$nodes[0]["node_name"].'">'.$value['node_name'].'</a>';
+                  }
+                  ?>
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-12 grid-margin stretch-card">
           <div class="card">
             <div class="card-body">
               <h4 class="card-title">Pressure</h4>
@@ -160,7 +186,7 @@ var sweet_loader = '<div class="sweet_loader"><svg viewBox="0 0 140 140" width="
 let timerInterval;
 function getDataML() {
   $.ajax({
-      url: "get_data_training.php", 
+      url: "get_data_training.php?node=<?=$node?>", 
       method: "GET", 
       success: function(data) {
         console.log(JSON.parse(data));
@@ -406,7 +432,7 @@ $(function() {
   setInterval(function(){ 
     this.anomalyflag = true;
     $.ajax({
-      url: "get_data_line_sql.php", 
+      url: "get_data_line_sql.php?node=<?=$node?>", 
       method: "GET", 
       success: function(data) {
         parsed_data = JSON.parse(data);

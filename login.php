@@ -5,7 +5,7 @@
   <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Ro-Chat | Log in</title>
+  <title>Flow | Log in</title>
   <!-- plugins:css -->
   <link rel="stylesheet" href="vendors/feather/feather.css">
   <link rel="stylesheet" href="vendors/ti-icons/css/themify-icons.css">
@@ -29,8 +29,6 @@
           <div class="col-lg-4 mx-auto">
             <div class="auth-form-light text-left py-5 px-4 px-sm-5">
               <div class="brand-logo">
-                <!-- <img src="images/logo.svg" alt="logo"> -->
-                <!-- <img src="images/rochat.png" alt="logo" /> -->
               </div>
               <!-- <h4>Hello! let's get started</h4> -->
               <h2 class="font-weight-light">Sign in to continue.</h2>
@@ -114,7 +112,6 @@
         },
         username: {
         required: true,
-        //email: true
         },
     },
     messages:
@@ -140,7 +137,6 @@
         data : data,
         beforeSend: function()
         {   
-            // $("#error").fadeOut();
             $("#btn-login").html('<i class="fa fa-sync fa-spin"></i> &nbsp; Signing In');
         },
         success :  function(response)
@@ -155,8 +151,6 @@
                           'error'
                           );
                         console.log("NO DATA : ", response);
-                        // $("#error").fadeIn(500, function(){                        
-                        // $("#error").html('<div class="alert alert-danger"> <span class="glyphicon glyphicon-info-sign"></span> &nbsp; Username Or Password is Wrong !</div>');});
                         $("#btn-login").html('<span class="glyphicon glyphicon-log-in"></span> &nbsp; Sign In');
                                 
                     }
@@ -185,10 +179,6 @@
                           'error'
                           );
                           $("#btn-login").html('<i class="fa fa-sync fa-spin"></i> &nbsp; Sign In');
-              // $("#error").fadeIn(500, function(){                        
-              //     $("#error").html('<div class="alert alert-danger"> <span class="glyphicon glyphicon-info-sign"></span> &nbsp; Error :  '+e+' !</div>');
-              //     $("#btn-login").html('<span class="glyphicon glyphicon-log-in"></span> &nbsp; Sign In');
-              //             });
               
             console.log("ERROR : ", e);
 

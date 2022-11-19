@@ -1,45 +1,33 @@
 <?php
-// $server_location = "http://".$_SERVER['SERVER_NAME']."/";
-// $database = "report";
-
-// require_once ('config/MysqliDb.php');
-// include_once ("config/db.php");
-// $db = new MysqliDb ('localhost', $dbuser, $dbpass, $dbname);
-// include("config/functions.php");
 
 function check_role($role_url,$role_action)
 {
 	global $db;
 	$tipe_user=isset($_SESSION['t']) ? $_SESSION['t'] : ""; 
 	$role_action=isset($role_action) ? $role_action : ""; 
-// echo "<script>console.log('tipe','".$tipe_user."');</script>";
+
 	$txt_action = '';
 	if($role_action!=null&&$role_action!='')
 	{
 		$txt_action = " AND  role_action = '$role_action' ";
 	}
-// echo "txt_action =".$txt_action ;
+
 	if($tipe_user=="ADMIN")
 	{
 		return true;
-// echo "ADMIN always true ";
-// echo "<script>console.log('info','ADMIN always true ');</script>";
 	}
 	else
 	{
 
 		$sql = "SELECT * FROM role WHERE role_user_tipe = '$tipe_user' AND  role_url = '$role_url' $txt_action "; 
-		// echo "<script>console.log('sql',\"".$sql."\");</script>";
 		$result = $db->rawQuery($sql);//@mysql_query($sql);
 		if($result)
 		{
 			return true;
-// var_dump( $result ); 
 		} 
 		else
 		{
 			return false;
-// echo "false";
 		}
 	}
 

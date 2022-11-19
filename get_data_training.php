@@ -14,6 +14,9 @@ $db2 = new MysqliDb ('localhost', $dbuser, $dbpass, $dbname);
 $db->autoReconnect = false;
 $db2->autoReconnect = false;
 
+$node=isset($_GET['node']) ? $_GET['node'] : 'RO1';
+$db->where ('remark', $node);
+
 $db->orderBy("id","Desc");
 $db->pageLimit = $limit;
 $page = 1;
