@@ -57,7 +57,8 @@ $db3->where ('remark is not NULL');
 $db3->orderBy("id","Desc");
 
 $maintenance1 = $db3->getOne("data_sensors",'DATE_FORMAT(remark, "%d %M %Y") as remark')["remark"];
-
+$nextMaintenance = date('d M Y');
+$countdowndata = "";
 if($maintenance1)
 {
   $nextMaintenance = date('d M Y', strtotime( $maintenance1 ));
