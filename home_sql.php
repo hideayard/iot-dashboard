@@ -11,16 +11,19 @@ $db3->autoReconnect = false;
 
 $db2 = new MysqliDb ('localhost', $dbuser, $dbpass, $dbname);
 $db2->autoReconnect = false;
-// $db->where ('remark', '');
-// $count = $db->getValue ("bot", "count(*)");
+
+$db0 = new MysqliDb ('localhost', $dbuser, $dbpass, $dbname);
+$db0->autoReconnect = false;
+
 $db->orderBy("id","Desc");
 $db->pageLimit = $limit;
-// $results_pressure = $db->get ('pressure');
 $page = 1;
+
+$nodes = $db0->get("node");
+// var_dump($nodes);die;
 // set page limit to 2 results per page. 20 by default
 $results_pressure = $db->arraybuilder()->paginate("data_sensors", $page);
-// echo "showing $page out of " . $db->totalPages;
-// var_dump($results_pressure);
+
 $i=0;
 foreach($results_pressure as $key => $value)
 {
@@ -31,17 +34,14 @@ foreach($results_pressure as $key => $value)
   $formatted[$i]['S'.++$j] = floatval($value['s4']);
   $formatted[$i]['S'.++$j] = floatval($value['s5']);
   
-  $formatted2[$i]['S1'] = floatval($value['s8']); //cond
-  $formatted2[$i]['S2'] = floatval($value['s6']); //flow
-  $formatted2[$i]['yaxis'] = (string)($value['created_at']);
+  $formatted2[$i]['S8'] = floatval($value['s8']); //cond
+  $formatted2[$i]['S9'] = floatval($value['s9']); ////cond
+  $formatted2[$i]['xcon'] = (string)($value['created_at']);
 
-  $formatted3[$i]['S1'] = floatval($value['s9']); //cond
-  $formatted3[$i]['S2'] = floatval($value['s7']); //flow
-  $formatted3[$i]['yaxis'] = (string)($value['created_at']);
-  // $formatted[$i]['S'.++$j] = floatval($value['s6']); flow
-  // $formatted[$i]['S'.++$j] = floatval($value['s7']); flow
-  // $formatted[$i]['S'.++$j] = floatval($value['s8']); cond
-  // $formatted[$i]['S'.++$j] = floatval($value['s9']);cond
+  $formatted3[$i]['S6'] = floatval($value['s6']); //flow
+  $formatted3[$i]['S7'] = floatval($value['s7']); //flow
+  $formatted3[$i]['xflow'] = (string)($value['created_at']);
+
   $formatted[$i]['yaxis'] = (string)($value['created_at']);
   $i++;
 }
@@ -50,19 +50,12 @@ $json_hasil2 = json_encode($formatted2);
 $json_hasil3 = json_encode($formatted3);
 
 $db3->where ('remark is not NULL');
-// $db3->where ('remark <> 1');
-// $db3->where ("DATE(created_at) = CURDATE()");
 $db3->orderBy("id","Desc");
-//DATE(created_at)
-// $results_pressure2 = $db2->arraybuilder()->paginate("data_sensors", $page);
+
 $maintenance1 = $db3->getOne("data_sensors",'DATE_FORMAT(remark, "%d %M %Y") as remark')["remark"];
 
-// var_dump($maintenance1);
-// $maintenance1 = $maintenance1['remark'];
-// $maintenance1 = checkMaintenance($hasillog1[0]['values']);
 if($maintenance1)
 {
-  // $nextMaintenance = date('d M Y', strtotime( $maintenance1 .' +2 months'));
   $nextMaintenance = date('d M Y', strtotime( $maintenance1 ));
   $date1 = new DateTime($nextMaintenance);
   $date2 = new DateTime($now);
@@ -71,7 +64,6 @@ if($maintenance1)
   {
     $interval = $date1->diff($date2);
     $countdowndata =  "";//$interval;
-  
   }
   else
   {
@@ -79,23 +71,6 @@ if($maintenance1)
     $countdowndata = ". <h4 style='color: red;'>Maintenance Date is Today.!</h4>";
   }
 }
-
-///////
-// $nextMaintenance[1] = date('d M Y', strtotime( $maintenance2[1] .' +2 months'));
-// $date3 = new DateTime($nextMaintenance[1]);
-// $date2 = new DateTime($now);
-// $countdowndata[1] = "";
-// if($date3 > $date2)
-// {
-//   $interval = $date3->diff($date2);
-//   $countdowndata[1] = "";//$interval;
-// }
-// else
-// {
-//   $countdowndata[1] = ". <h4 style='color: red;'>Maintenance Date is Today.!</h4>";
-// }
-///////
-
 
 ?>
 <link rel="stylesheet" href="css/countdown_flip.css">
@@ -179,12 +154,6 @@ if($maintenance1)
 <input type="hidden" id="dayPrediction"/>
 <script>
 
-// var net = new brain.recurrent.LSTMTimeStep({
-//             inputSize: 8,
-//             hiddenLayers: [10],
-//             outputSize: 8,
-//             });
-
 const myTimeout = setTimeout(getDataML, 5000);
 var sweet_loader = '<div class="sweet_loader"><svg viewBox="0 0 140 140" width="140" height="140"><g class="outline"><path d="m 70 28 a 1 1 0 0 0 0 84 a 1 1 0 0 0 0 -84" stroke="rgba(0,0,0,0.1)" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></g><g class="circle"><path d="m 70 28 a 1 1 0 0 0 0 84 a 1 1 0 0 0 0 -84" stroke="#71BBFF" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-dashoffset="200" stroke-dasharray="300"></path></g></svg></div>';
 
@@ -193,38 +162,12 @@ function getDataML() {
   $.ajax({
       url: "get_data_training.php", 
       method: "GET", 
-      // datatype: "json",
       success: function(data) {
-        // let data = data.replace(/(\r\n|\n|\r)/gm, "");
         console.log(JSON.parse(data));
         parsed_data = JSON.parse(data);
 
         document.getElementById('trainingData').value = JSON.stringify( parsed_data[0]) ;
         document.getElementById('lastData').value =JSON.stringify( parsed_data[1]) ;
-
-        // let timerInterval;
-
-        // Swal.fire({
-        //   title: 'Please Wait, Training In Progress!',
-        //   html: 'Machine Learning Complete Training in <b></b> milliseconds.',
-        //   timer: 10000,
-        //   timerProgressBar: true,
-        //   didOpen: () => {
-        //     Swal.showLoading()
-        //     const b = Swal.getHtmlContainer().querySelector('b')
-        //     timerInterval = setInterval(() => {
-        //       b.textContent = Swal.getTimerLeft()
-        //     }, 100)
-        //   },
-        //   willClose: () => {
-        //     clearInterval(timerInterval)
-        //   }
-        // }).then((result) => {
-        //   /* Read more about handling dismissals below */
-        //   if (result.dismiss === Swal.DismissReason.timer) {
-        //     console.log('I was closed by the timer')
-        //   }
-        // });
 
         if(parsed_data[2])
         {
@@ -234,45 +177,6 @@ function getDataML() {
         {
           TrainingML(parsed_data[0],parsed_data[1],parsed_data[2]);
         }
-        // Swal.fire({
-        //   html: '<h4>Loading...</h4>',
-        //   didOpen: () => {
-        //       Swal.showLoading()
-        //   }
-        //   // onRender: function() {
-        //   //   $('.swal2-content').prepend(sweet_loader);
-        //   // }
-        // });
-
-          // Swal({
-          //   title: 'Now loading',
-          //   allowEscapeKey: false,
-          //   allowOutsideClick: false,
-          //   timer: 2000,
-          //   onOpen: () => {
-          //     Swal.showLoading();
-          //   }
-          // }).then(
-          //   () => {},
-          //   (dismiss) => {
-          //     if (dismiss === 'timer') {
-          //       console.log('closed by timer!!!!');
-          //       Swal({ 
-          //         title: 'Finished!',
-          //         type: 'success',
-          //         timer: 2000,
-          //         showConfirmButton: false
-          //       })
-          //     }
-          //   }
-          // )
-        //showLoading();
-
-        // document.getElementById("fire")
-        //   .addEventListener('click', (event) => {
-        //     showLoading();
-        //   });
-          
       }
     
     });
@@ -291,8 +195,6 @@ function TrainingML(trainingData,lastData,idData)
               decayRate: 0.0099,
               });
 
-  // var trainingDataExample = [[-100,3,4,1,2,-20,-10,-30],[-100,3,4,1,2,-20,-10,-30],[-100,3,4,1,2,-20,-10,-30],[-100,3,4,1,2,-20,-10,-30],[-100,3,4,1,2,-20,-10,-30],[-100,3,4,1,2,-20,-10,-30],[3.04,3.42,3.61,2.48,2.86,3.42,2.11,3.61],[3.04,3.42,3.61,2.48,2.86,3.42,2.11,3.61],[3.04,3.42,3.61,2.48,2.86,3.42,0.8,3.61],[3.04,3.42,3.61,2.48,2.86,3.61,0.8,3.61],[3.04,3.42,3.61,2.48,3.04,3.61,0.8,3.61],[3.04,3.42,3.61,2.3,3.04,3.61,0.8,3.61],[3.04,3.42,3.61,2.3,3.04,3.61,0.8,3.61],[3.04,3.04,3.61,2.3,3.04,3.61,0.8,3.61],[2.67,3.04,3.61,2.3,3.04,3.61,0.8,3.61],[2.67,3.04,3.61,2.3,3.04,3.61,0.8,3.42],[2.67,3.04,3.61,2.3,3.04,3.61,2.3,3.42],[2.67,3.04,3.61,2.3,3.04,3.61,2.3,3.42],[2.67,3.04,3.61,2.3,3.04,3.61,2.3,3.42],[2.67,3.04,3.61,2.48,3.04,3.61,2.3,3.42],[2.67,3.04,3.79,2.48,3.04,3.61,2.3,3.42],[2.67,3.42,3.79,2.48,3.04,3.61,2.3,3.42],[3.04,3.42,3.79,2.48,3.04,3.61,2.3,3.42],[3.04,3.42,3.79,2.48,3.04,3.61,2.3,3.42],[3.04,3.42,3.79,2.48,3.04,3.61,2.11,3.42],[3.04,3.42,3.79,2.48,3.04,3.61,2.11,3.42],[3.04,3.42,3.79,2.48,3.04,3.61,2.11,3.42],[3.04,3.42,3.79,2.3,3.04,3.61,2.11,3.42],[3.04,3.42,3.79,2.3,3.04,3.61,2.11,3.42],[3.04,3.42,3.79,2.3,3.04,3.61,2.11,3.42]];
-  // console.log("trainingDataExample=",trainingDataExample);
   net.train(trainingData, { log: true, errorThresh: 0.09 });
 
   // now we're cookin' with gas!
@@ -338,42 +240,7 @@ function TrainingML(trainingData,lastData,idData)
   console.log("failureTimes=",failureTimes,"z=",z," rata2=",x);
   document.getElementById('dayPrediction').value = parseInt( (x*5)/60/24 );
   console.log(document.getElementById('dayPrediction').value);
-  // for (i; i < forecast.length; i++) 
-  // { 
-  //   forecastN[0] = forecast[i][0] - degradationValueTotal;
-  //   degradationValueTotal+=degradationValue;
-  //   if(forecastN[0]<3 || forecastN[0]>10)
-  //   {
-  //     console.log("detected",forecastN[0],"in",i); 
-
-  //   }
-  // }
-  // console.log("After Degradate forecast1000=",forecastN );
-
-  // const forecastN = net.forecast(
-  //     [ lastData ],
-  //     1000
-  // );
-  // console.log("this.forecast1000=",forecastN );
-
-  // let calculatedForecast = forecastN.forEach(getDetailSensor);
-  // var i=0;
-  // var degradationValueTotal = 0;
-  // var degradationValue = 0.01;
-  // for (i; i < forecastN.length; i++) 
-  // { 
-  //   forecastN[i][0] = forecastN[i][0] - degradationValueTotal;
-  //   degradationValueTotal+=degradationValue;
-  //   if(forecastN[i][0]<3 || forecastN[i][0]>10)
-  //   {
-  //     console.log("detected",forecastN[i][0],"in",i); 
-
-  //   }
-  // }
-  // console.log("After Degradate forecast1000=",forecastN );
-
-
-  // const dataPredict = {data:forecast};
+  
   var dataPredict = new FormData();
   dataPredict.append("predict", forecast);
   dataPredict.append("id", idData);
@@ -394,44 +261,7 @@ if(idData)
       try {
         rv = JSON.parse(data);
         console.log(rv.status,rv.info,rv);
-        // if(isEmpty(rv))
-        // {
-        //         Swal.fire(
-        //         'Info!',
-        //         'No Data!',
-        //         'info'
-        //         );
-        //     console.log("NO DATA : ", data);
-        // }
-        // else
-        // {
-        //   if(rv.status==true)
-        //   {
-        //     Swal.fire(
-        //         'Success!',
-        //         'Success Input Data!',
-        //         'success'
-        //         );
-        //     console.log("SUCCESS : ", data);
-        //     // setTimeout(function(){ window.location="users"; }, 1000);
-        //     $("#btnSubmit").html('<span class="fa fa-paper-plane"></span> Submit');
-        //     // $("#roleform")[0].reset();
 
-        //   }
-        //   else 
-        //   {
-        //     Swal.fire(
-        //         'error!',
-        //         'Error Input Data, '+data,
-        //         'error'
-        //         );
-            
-        //     console.log("ERROR : ", data);
-        //     $("#btnSubmit").html('<span class="fa fa-paper-plane"></span> Submit');
-
-        //   }
-
-        // }
       } catch (e) {
         //error data not json
         Swal.fire(
@@ -442,8 +272,6 @@ if(idData)
             
             console.log("ERROR : ", data);
       } 
-
-               
 
     },
     error: function (e) {
@@ -485,8 +313,6 @@ if(document.getElementById('dayPrediction').value > 0)
             console.log("ERROR : ", data);
       } 
 
-               
-
     },
     error: function (e) {
 
@@ -514,20 +340,14 @@ $(function() {
   var morrisLine1, morrisLine2, morrisLine3, anomalyData, anomalyCount, anomalyflag = false;
   var parsed_data = [];
   var anomaly = [];
-  
-  // const net = new brain.recurrent.LSTMTimeStep({
-  //           inputSize: 8,
-  //           hiddenLayers: [10],
-  //           outputSize: 8,
-  //           });
 
   // var trainingData = [];
   init_chart(<?=$json_hasil?>,<?=$json_hasil2?>,<?=$json_hasil3?>);
 
   function setDataMorris(data,data2,data3) {
     morrisLine1.setData(data);
-    morrisLine2.setData(data2);
     morrisLine3.setData(data3);
+    morrisLine2.setData(data2);
   }
 
   function init_chart(data,data2,data3)
@@ -546,7 +366,6 @@ $(function() {
         labels: ['Sensor 1 (Psi)','Sensor 2 (Psi)','Sensor 3 (Psi)','Sensor 4 (Psi)','Sensor 5 (Psi)','Sensor 6 (Psi)','Sensor 7 (Psi)','Sensor 8 (Psi)'],
         parseTime:false,
         hideHover:true,
-        
         // lineWidth:'6px',
         stacked: true       
       });
@@ -557,8 +376,8 @@ $(function() {
         element: 'con-chart',
         lineColors: ['#E56997', '#BD97CB'],
         data: arr_data2,
-        xkey: 'yaxis',
-        ykeys: ['S1','S2'],
+        xkey: 'xcon',
+        ykeys: ['S8','S9'],
         labels: ['Sensor 1 (mS/cm)','Sensor 2 (mS/cm)'],
         parseTime:false,
         hideHover:true,
@@ -572,8 +391,8 @@ $(function() {
         element: 'flow-chart',
         lineColors: ['#FBC740', '#66D2D6'],
         data: arr_data3,
-        xkey: 'yaxis',
-        ykeys: ['S1','S2'],
+        xkey: 'xflow',
+        ykeys: ['S6','S7'],
         labels: ['Sensor 1 (L/min)','Sensor 2 (L/min)'],
         parseTime:false,
         hideHover:true,
@@ -589,29 +408,14 @@ $(function() {
     $.ajax({
       url: "get_data_line_sql.php", 
       method: "GET", 
-      // datatype: "json",
       success: function(data) {
-        // let data = data.replace(/(\r\n|\n|\r)/gm, "");
-        console.log(JSON.parse(data));
         parsed_data = JSON.parse(data);
-        setDataMorris(parsed_data[0],parsed_data[1],parsed_data[2]);
-        // morrisLine1.setData(parsed_data);
-        // let detailsensor = this.parsed_data.forEach(checkAnomaly);
-        // this.anomalyData = detailsensor;
+        console.log("parsed_data",parsed_data);
+
         this.anomaly = parsed_data[3];
         console.log("this.anomaly=",this.anomaly);
+        setDataMorris(parsed_data[0],parsed_data[1],parsed_data[2]);
         document.getElementById("anomaly").value = JSON.stringify( parsed_data[3]) ;
-
-        // this.trainingData = parsed_data[4];
-        // console.log("this.trainingData=",this.trainingData);
-        // // this.TrainingML();
-        // this.net.train(trainingData, { log: true, errorThresh: 0.09 });
-        // const forecast = this.net.forecast(
-        //     [ [-100,3,4,1,2,-20,-10,-30] ],
-        //     2
-        // );
-
-        // console.log('next 2 predictions', forecast);
       }
     
     });
@@ -649,14 +453,6 @@ $(function() {
    }, 60000);
 
   });
-
-
-
-  // window.console = window.console || function(t) {};
-
-  // if (document.location.search.match(/type=embed/gi)) {
-  //   window.parent.postMessage("resize", "*");
-  // }
 
 </script>
 
@@ -712,7 +508,6 @@ $(function() {
     } } });
 
     var el = document.getElementById('countdown1');
-// document.body.appendChild(el);
 
 var Countdown = new Vue({
 
@@ -769,8 +564,7 @@ var Countdown = new Vue({
       if (date) {
         this.countdown = moment(date, 'YYYY-MM-DD HH:mm:ss');
       } else {
-        this.countdown = moment().endOf('day'); //this.$el.getAttribute('data-date');
-        // this.countdown = this.$el.getAttribute('data-date');
+        this.countdown = moment().endOf('day'); 
       }
     },
 
@@ -782,9 +576,6 @@ var Countdown = new Vue({
       if (this.countdown) {
 
         t = this.countdown.diff(t);
-
-        //t = this.countdown.diff(t);//.getTime();
-        //console.log(t);
         this.time.Days = Math.floor(t / (1000 * 60 * 60 * 24));
         this.time.Hours = Math.floor(t / (1000 * 60 * 60) % 24);
         this.time.Minutes = Math.floor(t / 1000 / 60 % 60);
@@ -803,98 +594,6 @@ var Countdown = new Vue({
     } } });
     //end of cd 1
 
-//     var el2 = document.getElementById('countdown2');
-
-//     var Countdown2 = new Vue({
-
-// el: el2,
-
-// template: ` 
-// <div class="flip-clock" data-date="2022-02-11" @click="update">
-//   <tracker 
-//     v-for="tracker in trackers"
-//     :property="tracker"
-//     :time="time"
-//     v-ref:trackers
-//   ></tracker>
-// </div>
-// `,
-
-// props: ['date', 'callback'],
-
-// data: () => ({
-//   time: {},
-//   i: 0,
-//   trackers: ['Days', 'Hours', 'Minutes', 'Seconds'] //'Random', 
-// }),
-
-// components: {
-//   Tracker },
-
-
-// beforeDestroy() {
-//   if (window['cancelAnimationFrame']) {
-//     cancelAnimationFrame(this.frame);
-//   }
-// },
-
-// watch: {
-//   'date': function (newVal) {
-//     this.setCountdown(newVal);
-//   } },
-
-
-// ready() {
-//   if (window['requestAnimationFrame']) {
-//     this.date = '<?=date('Y-m-d', strtotime( $maintenance2[1] .' +2 months'))?>';
-//     this.setCountdown(this.date);
-//     console.log("this.date=",this.date);
-//     this.callback = this.callback || function () {};
-//     this.update();
-//   }
-// },
-
-// methods: {
-
-//   setCountdown(date) {
-
-//     if (date) {
-//       this.countdown = moment(date, 'YYYY-MM-DD HH:mm:ss');
-//     } else {
-//       this.countdown = moment().endOf('day'); //this.$el.getAttribute('data-date');
-//       // this.countdown = this.$el.getAttribute('data-date');
-//     }
-//   },
-
-//   update() {
-//     this.frame = requestAnimationFrame(this.update.bind(this));
-//     if (this.i++ % 10) {return;}
-//     var t = moment(new Date());
-//     // Calculation adapted from https://www.sitepoint.com/build-javascript-countdown-timer-no-dependencies/
-//     if (this.countdown) {
-
-//       t = this.countdown.diff(t);
-
-//       //t = this.countdown.diff(t);//.getTime();
-//       //console.log(t);
-//       this.time.Days = Math.floor(t / (1000 * 60 * 60 * 24));
-//       this.time.Hours = Math.floor(t / (1000 * 60 * 60) % 24);
-//       this.time.Minutes = Math.floor(t / 1000 / 60 % 60);
-//       this.time.Seconds = Math.floor(t / 1000 % 60);
-//     } else {
-//       this.time.Days = undefined;
-//       this.time.Hours = t.hours() % 13;
-//       this.time.Minutes = t.minutes();
-//       this.time.Seconds = t.seconds();
-//     }
-
-//     this.time.Total = t;
-
-//     this.$broadcast('time', this.time);
-//     return this.time;
-//   } } });
-  ///end of cd 2
-//# sourceURL=pen.js
     </script>
 
 

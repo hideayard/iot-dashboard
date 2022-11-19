@@ -1,5 +1,5 @@
 <?php
-ini_set('display_errors', 0);
+// ini_set('display_errors', 0);
 
 require __DIR__ . '/vendor/autoload.php';
 
@@ -8,7 +8,7 @@ include_once ("config/db.php");
 $limit = 30;
 $countAnomaly = array();
 $Anomaly = array();
-$countAnomaly['s1'] = $countAnomaly['s2'] = $countAnomaly['s3'] = $countAnomaly['s4'] = $countAnomaly['s5'] = $countAnomaly['s6'] = $countAnomaly['s7'] = $countAnomaly['s8'] = 0;
+$countAnomaly['s1'] = $countAnomaly['s2'] = $countAnomaly['s3'] = $countAnomaly['s4'] = $countAnomaly['s5'] = $countAnomaly['flow1'] = $countAnomaly['flow2'] = $countAnomaly['con1'] = $countAnomaly['con2'] = 0;
 $db = new MysqliDb ('localhost', $dbuser, $dbpass, $dbname);
 $db->autoReconnect = false;
 
@@ -36,10 +36,20 @@ foreach($result_sensors as $key => $value)
   $formatted[$i]['S'.++$j] = floatval($value['s4']);
   $formatted[$i]['S'.++$j] = floatval($value['s5']);
   $formatted[$i]['yaxis'] = (string)($value['created_at']);
+
+  // 6 & 7 -> flow
+  // 8 & 9 -> con
+  $formatted3[$i]['S'.++$j] = floatval($value['s6']);
+  $formatted3[$i]['S'.++$j] = floatval($value['s7']);
+  $formatted3[$i]['xflow'] = (string)($value['created_at']);
+
+  $formatted2[$i]['S'.++$j] = floatval($value['s8']);
+  $formatted2[$i]['S'.++$j] = floatval($value['s9']);
+  $formatted2[$i]['xcon'] = (string)($value['created_at']);
+
   $j=0;
   $dataTraining[$i] = array(floatval($value['s1']) , floatval($value['s2']) , floatval($value['s3']) , floatval($value['s4']) , floatval($value['s5']) );
-  $i++;
-  
+
   if((floatval($value['s1']) < 3) || (floatval($value['s1']) > 10))
   {
     $Anomaly['s1'] = false;  
@@ -81,33 +91,6 @@ foreach($result_sensors as $key => $value)
     }
   }
 
-  // 6 & 7 -> flow
-  // 8 & 9 -> con
-  $formatted2[$i]['S1'] = floatval($value['s6']);
-  $formatted2[$i]['S2'] = floatval($value['s7']);
-  $formatted3[$i]['S1'] = floatval($value['s8']);
-  $formatted3[$i]['S2'] = floatval($value['s9']);
-  $formatted2[$i]['yaxis'] = (string)($value['created_at']);
-  $formatted3[$i]['yaxis'] = (string)($value['created_at']);
-
-  if((floatval($value['s8']) < 0.7 ) || (floatval($value['s8']) > 0.9 ))
-  {
-    $Anomaly['con1'] = false;  
-    if(++$countAnomaly['con1'] > 5)
-    {
-        $Anomaly['con1'] = floatval($value['s8']);
-    }
-  }
-
-  if((floatval($value['s9']) < 0.7 ) || (floatval($value['s9']) > 0.9 ))
-  {
-    $Anomaly['con2'] = false;  
-    if(++$countAnomaly['con2'] > 5)
-    {
-        $Anomaly['con2'] = floatval($value['s9']);
-    }
-  }
- 
   if((floatval($value['s6']) < 0) || (floatval($value['s6']) > 8))
   {
     $Anomaly['flow1'] = false;  
@@ -126,13 +109,27 @@ foreach($result_sensors as $key => $value)
     }
   }
 
+  if((floatval($value['s8']) < 0.7 ) || (floatval($value['s8']) > 0.9 ))
+  {
+    $Anomaly['con1'] = false;  
+    if(++$countAnomaly['con1'] > 5)
+    {
+        $Anomaly['con1'] = floatval($value['s8']);
+    }
+  }
+
+  if((floatval($value['s9']) < 0.7 ) || (floatval($value['s9']) > 0.9 ))
+  {
+    $Anomaly['con2'] = false;  
+    if(++$countAnomaly['con2'] > 5)
+    {
+        $Anomaly['con2'] = floatval($value['s9']);
+    }
+  }
+  $i++;
 }
 
-foreach ($Anomaly as $key => $value)
-    if ($value == FALSE)
-        unset($Anomaly[$key]);
-
-$json_hasil1 = json_encode($formatted);
+// $json_hasil1 = json_encode($formatted);
 // var_dump($json_hasil);
 ////==========================================
 // $db2->orderBy("id","Desc");
@@ -189,7 +186,7 @@ $json_hasil1 = json_encode($formatted);
   
 //   $i++;
 // }
-$json_hasil2 = json_encode($formatted2);
+// $json_hasil2 = json_encode($formatted2);
 ////==========================================
 // $db2->orderBy("id","Desc");
 // // $db2->where("remark", "RO2");
@@ -223,7 +220,11 @@ $json_hasil2 = json_encode($formatted2);
 
 //   $i++;
 // }
-$json_hasil3 = json_encode($formatted3);
+// $json_hasil3 = json_encode($formatted3);
+
+foreach ($Anomaly as $key => $value)
+    if ($value == FALSE)
+        unset($Anomaly[$key]);
 
 echo json_encode(array($formatted,$formatted2,$formatted3,$Anomaly));
 // echo json_encode(array($formatted,$formatted2,$Anomaly));
