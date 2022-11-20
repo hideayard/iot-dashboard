@@ -93,26 +93,14 @@ function check_active($key,$string)
                 </li>
               </ul>
             </div>
-          </li>
-
-          <!-- <li class="nav-item">
-            <a class="nav-link"  <?=check_active($page,'bot_setting')?>  href="bot_setting">
-            <i class="icon-contract menu-icon"></i>
-              <span class="menu-title">FAQ Setting</span>
-            </a>
-          </li> -->
+          </li> 
 
           <?php
           if($id_user!="" && ( $tipe_user=="ADMIN" || $tipe_user=="BIRO_JODOH") )
           {
           ?>
 
-          <!-- <li class="nav-item">
-            <a class="nav-link"  <?=check_active($page,'pretest')?>  href="pretest">
-              <i class="icon-paper menu-icon"></i>
-              <span class="menu-title">Pre-Test</span>
-            </a>
-          </li>
+
 
           <li class="nav-item">
             <a class="nav-link"  <?=check_active($page,'kriteria')?>  href="kriteria">
@@ -140,7 +128,8 @@ function check_active($key,$string)
             </a>
             <div class="collapse" id="lastmenu">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="settings"> Setting </a></li>
+              <li class="nav-item"> <a class="nav-link" href="nodes"> Node </a></li>
+              <li class="nav-item"> <a class="nav-link" href="settings"> Setting </a></li>
                 <li class="nav-item"> <a class="nav-link" href="logout.php"> Logout </a></li>
               </ul>
             </div>
