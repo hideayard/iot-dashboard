@@ -9,23 +9,21 @@ $db = new MysqliDb ('localhost', $dbuser, $dbpass, $dbname);
 include("config/functions.php");       
 
 
-$s1 = (isset($_GET['s1']) && $_GET['s1'] > 0 )?$_GET['s1']:"";//pressure sensor
-$s2 = (isset($_GET['s2']) && $_GET['s2'] > 0 )?$_GET['s2']:"";//pressure sensor
-$s3 = (isset($_GET['s3']) && $_GET['s3'] > 0 )?$_GET['s3']:"";//pressure sensor
-$s4 = (isset($_GET['s4']) && $_GET['s4'] > 0 )?$_GET['s4']:"";//pressure sensor
-$s5 = (isset($_GET['s5']) && $_GET['s5'] > 0 )?$_GET['s5']:"";//pressure sensor
-$s6 = (isset($_GET['s6']) && $_GET['s6'] > 0 )?$_GET['s6']:"";//flow rate sensor
-$s7 = (isset($_GET['s7']) && $_GET['s7'] > 0 )?$_GET['s7']:"";//flow rate sensor
-$s8 = (isset($_GET['s8']) && $_GET['s8'] > 0 )?$_GET['s8']:"";//conductivity sensor
-$s9 = (isset($_GET['s9']) && $_GET['s9'] > 0 )?$_GET['s9']:"";//conductivity sensor
+$s1 = (isset($_GET['s1'])&&($_GET['s1']))?strval($_GET['s1']):"0";//pressure sensor
+$s2 = (isset($_GET['s2'])&&($_GET['s2']))?strval($_GET['s2']):"0";//pressure sensor
+$s3 = (isset($_GET['s3'])&&($_GET['s3']))?strval($_GET['s3']):"0";//pressure sensor
+$s4 = (isset($_GET['s4'])&&($_GET['s4']))?strval($_GET['s4']):"0";//pressure sensor
+$s5 = (isset($_GET['s5'])&&($_GET['s5']))?strval($_GET['s5']):"0";//pressure sensor
+$s6 = (isset($_GET['s6'])&&($_GET['s6']))?strval($_GET['s6']):"0";//flow rate sensor
+$s7 = (isset($_GET['s7'])&&($_GET['s7']))?strval($_GET['s7']):"0";//flow rate sensor
+$s8 = (isset($_GET['s8'])&&($_GET['s8']))?strval($_GET['s8']):"0";//conductivity sensor
+$s9 = (isset($_GET['s9'])&&($_GET['s9']))?strval($_GET['s9']):"0";//conductivity sensor
 
 $ip = isset($_GET['ip'])?$_GET['ip']:"";
 $remark = isset($_GET['remark'])?$_GET['remark']:"";
 
 $message = "Insert Sukses!!";
 $tgl = (new \DateTime())->format('Y-m-d H:i:s');
-
-
 $data = Array ( );
 
 if($ip!="")
@@ -78,13 +76,13 @@ if($remark!="")
 $data += array('created_by' => 1234 );
 $data += array('created_at' => $tgl);
 
-if($db->insert ('data_sensors', $data))
+if($db->insert ('data_sensors2', $data))
 {
-    echo json_encode( array("status" => true,"info" => "success","messages" => $message, "data" => $data  ) );
+    echo json_encode( array("status" => true,"info" => "success","messages" => $message, "data" => $data ) );
 }
 else
 {
-    echo json_encode( array("status" => false,"info" => $db->getLastError(),"messages" => $message, "data" => $data  ) );
+    echo json_encode( array("status" => false,"info" => $db->getLastError(),"messages" => $message, "data" => $data ) );
 }
 
 ?>
